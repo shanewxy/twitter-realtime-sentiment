@@ -5,20 +5,11 @@ from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import json
 import couchdb
+import argparse
 
 import twitter_credentials
 
 analyser = SentimentIntensityAnalyzer()
-
-db_user = "admin"
-db_pwd = "admin"
-db_server = couchdb.Server("http://%s:%s@localhost:5984/" % (db_user, db_pwd))
-db_name = "twitter_realtime_sentiment"
-if db_name in db_server:
-    db = db_server[db_name]
-else:
-    db = db_server.create(db_name)
-
 
 class TwitterStreamer:
     """
@@ -41,8 +32,9 @@ class MyStreamListener(StreamListener):
 
     def on_data(self, data):
         try:
+            # print(data)
             data_object = json.loads(data)
-            store_tweets_locally(filename, data_object)
+            # store_tweets_locally(filename, data_object)
             store_tweets_db(data_object)
 
         except BaseException as e:
@@ -109,6 +101,19 @@ if __name__ == "__main__":
     # coordinates of Melbourne
     locations = [144.9631, -37.8136, 145.9631, -36.8136]
     filename = "tweets.json"
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--user", default="admin", type=str, help="couchdb user")
+    parser.add_argument("--pwd", default="admin", type=str, help="couchdb password")
+    parser.add_argument("--server", default="localhost:5984", type=str, help="couchdb server address")
+    args = parser.parse_args()
+
+    db_server = couchdb.Server("http://%s:%s@%s/" % (args.user, args.pwd, args.server))
+    db_name = "twitter_realtime_sentiment"
+    if db_name in db_server:
+        db = db_server[db_name]
+    else:
+        db = db_server.create(db_name)
 
     twitter_streamer = TwitterStreamer()
     twitter_streamer.stream_tweets(filename, locations)
