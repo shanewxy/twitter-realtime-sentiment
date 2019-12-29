@@ -24,5 +24,5 @@ class CouchDBConnector:
 
 couchdbConnector = CouchDBConnector()
 tweet_db = couchdbConnector.database
-for tweet in tweet_db.view("statistics/all_tweets"):
+for tweet in tweet_db.view("statistics/zones_sentiment", group=True):
     print(tweet)
