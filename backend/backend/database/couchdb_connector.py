@@ -1,6 +1,7 @@
 import couchdb
 import logging
 from backend.database.config import *
+from backend.database.couchdb_view import *
 
 logger = logging.getLogger(__name__)
 
@@ -11,13 +12,17 @@ class CouchDBConnector:
         self.ports = ports.__str__()
         try:
             self.server = couchdb.Server(url.format(domain, ports))
-        except Exception:
-            logger.error("CouchDB connection failed")
+            self.server.create('tweet')
+        except Exception as e:
+            logger.error(e)
+        try:
+            self.database = self.server['tweet']
+            self.database.save(DESIGN_DOCS)
+        except Exception as e:
+            logger.error(e)
 
 
 couchdbConnector = CouchDBConnector()
-couchdbServer = couchdbConnector.server
-try:
-    couchdbConnector.server.create('tweet')
-except Exception:
-    logger.error("Failed to create database")
+tweet_db = couchdbConnector.database
+for tweet in tweet_db.view("statistics/all_tweets"):
+    print(tweet)
