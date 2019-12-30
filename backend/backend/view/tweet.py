@@ -16,4 +16,13 @@ def tweet_upload(request):
     if request.method == "POST":
         logger.info("Saving tweet into database...")
         tweet_id, rev = tweet_db.save(tweet_json)
-    return HttpResponse("rev:{}", rev)
+    return HttpResponse(ujson.dumps(tweet_json))
+
+
+def historic_zones(request):
+    result = tweet_db.view("statistics/zones_sentiment", group=True)
+    resp = {}
+    for row in result:
+        resp[row.key[0]] = {'avg': row.value.get('sum') / row.value.get('count'), 'count': row.value.get('count')}
+    logger.info("response: %s", resp)
+    return HttpResponse(ujson.dumps(resp))

@@ -12,11 +12,11 @@ class CouchDBConnector:
         self.ports = ports.__str__()
         try:
             self.server = couchdb.Server(url.format(domain, ports))
-            self.server.create('tweet')
+            self.server.create(TWEET_DB)
         except Exception as e:
             logger.error(e)
         try:
-            self.database = self.server['tweet']
+            self.database = self.server[TWEET_DB]
             self.database.save(DESIGN_DOCS)
         except Exception as e:
             logger.error(e)
@@ -24,5 +24,7 @@ class CouchDBConnector:
 
 couchdbConnector = CouchDBConnector()
 tweet_db = couchdbConnector.database
-for tweet in tweet_db.view("statistics/zones_sentiment", group=True):
-    print(tweet)
+
+if __name__ == '__main__':
+    for row in tweet_db.view("statistics/zones_sentiment", group=True):
+        print(row)
