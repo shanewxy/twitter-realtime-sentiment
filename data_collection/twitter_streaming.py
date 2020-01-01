@@ -27,6 +27,7 @@ class MyStreamListener(StreamListener):
 
     def on_data(self, data):
         try:
+            # print(data)
             data_object = json.loads(data)
             # store_tweets_locally(filename, data_object)
             store_tweets_db(data_object)
@@ -109,6 +110,8 @@ if __name__ == "__main__":
 
     # db_server = couchdb.Server("http://%s:%s@%s/" % (args.user, args.pwd, args.server))
     db_server = couchdb.Server("http://%s/" % args.server)
+    args = parser.parse_args()
+
     db_name = "twitter_realtime_sentiment"
     if db_name in db_server:
         db = db_server[db_name]
