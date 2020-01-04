@@ -20,6 +20,7 @@ from backend.view.tweet import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tweet/upload', tweet_upload),
-    path('avg/historic', historic_zones),
-    path('avg/realtime', realtime_zones)
+    path('stats/historic', historic_zones),
+    path('stats/realtime', realtime_zones),
+    path('stats/historic/minmax', stats_min_max)
 ]

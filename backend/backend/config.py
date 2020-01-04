@@ -7,13 +7,13 @@ COUCHDB_URL = 'http://{}:{}/'
 
 # # unimelb
 
-# COUCHDB_DOMAIN = '172.26.128.26'
-# COUCHDB_PORT = 5984
+COUCHDB_DOMAIN = '172.17.0.1'
+COUCHDB_PORT = 5984
 
 # localhost
-
-COUCHDB_DOMAIN = '127.0.0.1'
-COUCHDB_PORT = 5984
+#
+# COUCHDB_DOMAIN = '127.0.0.1'
+# COUCHDB_PORT = 5984
 
 TWEET_DB = 'tweet'
 STATISTICS_DB = 'statistics'

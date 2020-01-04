@@ -1,6 +1,6 @@
 import couchdb
 import logging
-from backend.database.config import *
+from backend.config import *
 from backend.database.design_docs import *
 
 logger = logging.getLogger(__name__)
@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 class CouchDBConnector:
     def __init__(self, url=COUCHDB_URL, domain=COUCHDB_DOMAIN, ports=COUCHDB_PORT):
-        self.domain = domain
-        self.ports = ports.__str__()
         try:
+            self.domain = domain
+            self.ports = ports.__str__()
             self.server = couchdb.Server(url.format(domain, ports))
             self.server.create(TWEET_DB)
         except Exception as e:
@@ -24,7 +24,11 @@ class CouchDBConnector:
         try:
             self.tweet_db = self.server[TWEET_DB]
             self.statistics_db = self.server[STATISTICS_DB]
-            self.tweet_db.save(DESIGN_DOCS)
+            self.tweet_db.save(DESIGN_DOCS_TWEETS)
+        except Exception as e:
+            logger.error(e)
+        try:
+            self.statistics_db.save(DESIGN_DOCS_STATS)
         except Exception as e:
             logger.error(e)
 
