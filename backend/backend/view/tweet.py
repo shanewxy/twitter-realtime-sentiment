@@ -59,14 +59,12 @@ def realtime_zones(request):
     :param request:
     :return: json like: {"Melbourne":{"count":2,"sum":2.0,"avg":1.0}}
     """
-    minute = request.body['minute']
-    if minute is None:
-        minute = 5
+    minute = request.GET.get('minute', default=5)
     resp = dict()
     now = datetime.datetime.now()
     now_timestamp = datetime.datetime.timestamp(now)
 
-    start_time = now - datetime.timedelta(minutes=minute)
+    start_time = now - datetime.timedelta(minutes=int(minute))
     start_timestamp = datetime.datetime.timestamp(start_time)
 
     tweets = tweet_db.view("sentiment/realtime_zone", start_key=start_timestamp, end_key=now_timestamp)
