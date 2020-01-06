@@ -59,13 +59,12 @@ def realtime_zones(request):
     :param request:
     :return: json like: {"Melbourne":{"count":2,"sum":2.0,"avg":1.0}}
     """
-
+    minute = request.GET.get('minute', default=5)
     resp = dict()
-
     now = datetime.datetime.now()
     now_timestamp = datetime.datetime.timestamp(now)
 
-    start_time = now - datetime.timedelta(weeks=1)
+    start_time = now - datetime.timedelta(minutes=int(minute))
     start_timestamp = datetime.datetime.timestamp(start_time)
 
     tweets = tweet_db.view("sentiment/realtime_zone", start_key=start_timestamp, end_key=now_timestamp)
@@ -107,7 +106,7 @@ def stats_min_max(request):
     max_stat = dict()
     for stat in stats:
         place, start_time, end_time = stat.key
-        score, count = stat.value
+        count, score = stat.value
         if min_stat.get(place) is None or score < min_stat[place]["sentiment"]:
             min_stat[place] = dict()
             min_stat[place]["start_time"] = start_time
@@ -129,5 +128,5 @@ def stats_min_max(request):
 
 
 if __name__ == '__main__':
-    melb_json = ujson.load(open(os.path.join(os.path.dirname(BASE_DIR),'SA2boundary.json')))
+    melb_json = ujson.load(open(os.path.join(os.path.dirname(BASE_DIR), 'SA2boundary.json')))
     # print(os.path.join(os.path.dirname(BASE_DIR),'SA2boundary.json'))
