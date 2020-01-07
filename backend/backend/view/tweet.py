@@ -46,7 +46,8 @@ def historic_zones(request):
     resp = dict()
 
     for row in result:
-        resp[row.key[0]] = {'avg': row.value.get('sum') / row.value.get('count'), 'count': row.value.get('count')}
+        resp[(row.key[0], row.key[1])] = {'avg': row.value.get('sum') / row.value.get('count'),
+                                          'count': row.value.get('count')}
     logger.info("response: %s", resp)
 
     return HttpResponse(ujson.dumps(resp))
@@ -72,14 +73,16 @@ def realtime_zones(request):
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
     end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
     for tweet in tweets:
-        place = tweet.value[0]
-        score = tweet.value[1]
-        user = tweet.value[2]
-        if resp.get(place) is None:
-            resp[place] = {'count': 0, 'sum': 0.0, 'users': set()}
-        resp[place]['count'] += 1
-        resp[place]['sum'] += score
-        resp[place]['users'].add(user)
+        name = tweet.value[0]
+        code = tweet.value[1]
+        score = tweet.value[2]
+        user = tweet.value[3]
+        key = (name, code)
+        if resp.get(key) is None:
+            resp[key] = {'count': 0, 'sum': 0.0, 'users': set()}
+        resp[key]['count'] += 1
+        resp[key]['sum'] += score
+        resp[key]['users'].add(user)
 
     for place, score in resp.items():
         resp[place]['avg'] = score['sum'] / score['count']
@@ -105,7 +108,11 @@ def stats_min_max(request):
     min_stat = dict()
     max_stat = dict()
     for stat in stats:
-        place, start_time, end_time = stat.key
+        name = stat.key[0]
+        code = stat.key[0]
+        start_time = stat.key[0]
+        end_time = stat.key[0]
+        place = (name, code)
         count, score = stat.value
         if min_stat.get(place) is None or score < min_stat[place]["sentiment"]:
             min_stat[place] = dict()
