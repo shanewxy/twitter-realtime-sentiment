@@ -9,7 +9,7 @@ DESIGN_DOCS_TWEETS = {
             "reduce": "_stats"
         },
         "realtime_zone": {
-            "map": "function(doc){if(doc.timestamp,doc.place,doc.sentiment,doc.user_id)emit(doc.timestamp,[doc.place,doc.sentiment,doc.user_id])}"
+            "map": "function(doc){if(doc.timestamp,doc.place,doc.sentiment,doc.user_id)emit(doc.timestamp,[doc.place,doc.sentiment,doc.user_id,doc.text])}"
         },
     }
 }
