@@ -2,7 +2,8 @@ import json
 import time
 import couchdb
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from twitter_streaming import sentiment_analyzer_scores, get_sa2_name
+from twitter_streaming import sentiment_analyzer_scores
+from twitter_streaming import get_sa2_name
 import requests
 
 locations = [143.9631, -38.8136, 145.9631, -36.8136]  # Melbourne's location
@@ -18,7 +19,7 @@ def store_tweet_db(json_obj):
         sa2_name = json_obj['json']['place']['name']
         sa2_code = ""
 
-    doc_id, doc_rev = requests.post("http://localhost:8080/tweet/upload", json={'text': data_object['json']['text'],
+    doc_id, doc_rev = requests.post("http://localhost:8080/tweet/upload", json={'text': json_obj['json']['text'],
                                'coordinates': json_obj['json']['coordinates']['coordinates'],
                                'created_at': json_obj['json']['created_at'],
                                'sa2_name': sa2_name,
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     else:
         db = db_server.create(db_name)
 
-    with open("/Users/pengkedi/Downloads/bigTwitter.json", 'r') as f:
+    with open("/home/ubuntu/project/bigTwitter.json", 'r') as f:
         for cnt, line in enumerate(f):
             try:
                 line = line.strip('\n').strip(',')
@@ -75,5 +76,4 @@ if __name__ == "__main__":
             except Exception as e:
                 print(e)
                 continue
-
 
