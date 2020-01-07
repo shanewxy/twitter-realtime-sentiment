@@ -4,6 +4,7 @@ from tweepy import Stream
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import json
+import requests
 import couchdb
 import argparse
 import twitter_credentials
@@ -45,7 +46,7 @@ def store_tweets_db(data_object):
     # double check place here, no idea why Streaming API will return 'New South Wales' or 'Victoria'
     # even if already set the stream filter
     if str(place) != 'New South Wales' and str(place) != 'Victoria':
-        doc_id, doc_rev = db.save({'text': data_object['text'],
+        doc_id, doc_rev = requests.post("http://localhost:8080/tweet/upload",json={'text': data_object['text'],
                                    'coordinates': data_object['coordinates'],
                                    'created_at': data_object['created_at'],
                                    'place': data_object['place']['name'],
