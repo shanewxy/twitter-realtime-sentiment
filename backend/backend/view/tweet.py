@@ -1,10 +1,11 @@
 from backend.database.couchdb_connector import *
 from backend.settings import *
 # from shapely import *
-import ujson
+from backend.topic_modeling.topic import common_topic
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import logging
+import ujson
 import datetime
 
 logger = logging.getLogger('django')
@@ -109,9 +110,9 @@ def stats_min_max(request):
     max_stat = dict()
     for stat in stats:
         name = stat.key[0]
-        code = stat.key[0]
-        start_time = stat.key[0]
-        end_time = stat.key[0]
+        code = stat.key[1]
+        start_time = stat.key[2]
+        end_time = stat.key[3]
         place = (name, code)
         count, score = stat.value
         if min_stat.get(place) is None or score < min_stat[place]["sentiment"]:
@@ -131,6 +132,38 @@ def stats_min_max(request):
     resp = dict()
     resp["historic_min"] = min_stat
     resp["historic_max"] = max_stat
+    return HttpResponse(ujson.dumps(resp))
+
+
+def top_words(request):
+    """
+    An api used to query the top hot words
+    :param request: contains end time and top limit
+    :return: {start_time, end_time, words}
+    """
+    minute = request.GET.get('minute', default=5)
+    limit = request.GET.get('limit', default=10)
+    resp = dict()
+    now = datetime.datetime.now()
+    now_timestamp = datetime.datetime.timestamp(now)
+
+    start_time = now - datetime.timedelta(minutes=int(minute))
+    start_timestamp = datetime.datetime.timestamp(start_time)
+    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+
+    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
+    end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
+
+    resp['start_time'] = start_time
+    resp['end_time'] = end_time
+
+    text = ""
+    for tweet in tweets:
+        text += tweet.value
+
+    words = common_topic(text, limit)
+
+    resp['top_words'] = words
     return HttpResponse(ujson.dumps(resp))
 
 

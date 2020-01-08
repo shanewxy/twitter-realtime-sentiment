@@ -11,6 +11,9 @@ DESIGN_DOCS_TWEETS = {
         "realtime_zone": {
             "map": "function(doc){if(doc.timestamp,doc.sa2_name,doc.sentiment,doc.user_id)emit(doc.timestamp,[doc.sa2_name,doc.sa2_code,doc.sentiment,doc.user_id])}"
         },
+        "tweets_content": {
+            "map": "function(doc){emit(doc.timestamp,doc.text)}"
+        }
     }
 }
 DESIGN_DOCS_STATS = {
