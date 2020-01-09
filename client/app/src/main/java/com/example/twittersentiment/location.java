@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 
@@ -74,36 +75,7 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
         search = findViewById(R.id.button);
         search.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            int minute = Integer.parseInt(time.getText().toString());
-                            URL historyURL = new URL("http://1926b0aa.jp.ngrok.io/stats/historic");
-                            URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute="+minute);
-                            HttpURLConnection his_connection = (HttpURLConnection) historyURL.openConnection();
-                            HttpURLConnection real_connection = (HttpURLConnection) realURL.openConnection();
-                            his_connection.setRequestMethod("GET");
-                            real_connection.setRequestMethod("GET");
-                            his_connection.connect();
-                            real_connection.connect();
-                            int his_responseCode = his_connection.getResponseCode();
-                            int real_responseCode = real_connection.getResponseCode();
-                            if(his_responseCode == HttpURLConnection.HTTP_OK ){
-                                InputStream his_input = his_connection.getInputStream();
-                                InputStream real_input = real_connection.getInputStream();
-                                JSONObject result =  getJsonObject(his_input);
-                                JSONObject real_result  = getJsonObject(real_input);
-                                Log.d(TAG, "run: get the http result"+ result.getString("('Alphington - Fairfield', '21110')"));
-                                Log.d(TAG, "run: "+ real_result.toString());
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.d(TAG, "run: "+e.getMessage());
-                        }
-                    }
-                }).start();
+                sendHttpRequest();
             }
         });
         try {
@@ -168,6 +140,90 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
     }
 
 
+    public  void sendHttpRequest(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int minute;
+                    if(!time.getText().toString().equals("")) {
+                        minute = Integer.parseInt(time.getText().toString());
+                    }
+                    else {
+                        minute = 600;
+                    }
+                    URL historyURL = new URL("http://1926b0aa.jp.ngrok.io/stats/historic");
+                    URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute="+minute);
+                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/words");
+                    JSONObject his_result =  getHttpConnection(historyURL);
+                    JSONObject real_result  = getHttpConnection(realURL);
+                    JSONObject topic_result = getHttpConnection(topicURL);
+                    showResponse(his_result,real_result);
+                    Log.d(TAG, "run: get the http result"+ his_result.getString("('Alphington - Fairfield', '21110')"));
+                    Log.d(TAG, "run: "+ real_result.toString());
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "run: "+e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    private JSONObject getHttpConnection(URL url){
+        try {
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if(responseCode == HttpURLConnection.HTTP_OK  ){
+                InputStream input = connection.getInputStream();
+                JSONObject result =  getJsonObject(input);
+                connection.disconnect();
+                return result;
+            }
+            else{
+                networkError();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    private void showResponse(final JSONObject his_result, final JSONObject real_result) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                GeoJsonLayer layer = null;
+                try {
+                    layer = new GeoJsonLayer(mMap, R.raw.boundary,
+                            getApplicationContext());
+                    layer.addLayerToMap();
+                    layer.getFeatures();
+                    Log.d(TAG, "run: showResponse");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void networkError(){
+        runOnUiThread((new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(location.this,"Network Error",Toast.LENGTH_SHORT);
+            }
+        }));
+    }
+
+
 
 
     //Returns a json object from an input stream
@@ -213,10 +269,7 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
             if(mLastLocation != null) {
                 LatLng latlng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12f));
-                GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.boundary,
-                        getApplicationContext());
-                layer.addLayerToMap();
-                layer.getFeatures();
+
             }
 
         } catch (Exception e) {
