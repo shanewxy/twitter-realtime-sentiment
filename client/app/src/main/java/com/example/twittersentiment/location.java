@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -31,9 +32,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.data.geojson.GeoJsonLineStringStyle;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 import org.json.JSONException;
@@ -154,7 +157,7 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
                     }
                     URL historyURL = new URL("http://1926b0aa.jp.ngrok.io/stats/historic");
                     URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute="+minute);
-                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/words");
+                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics?minute="+minute);
                     JSONObject his_result =  getHttpConnection(historyURL);
                     JSONObject real_result  = getHttpConnection(realURL);
                     JSONObject topic_result = getHttpConnection(topicURL);
@@ -197,12 +200,24 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                GeoJsonLayer layer = null;
                 try {
-                    layer = new GeoJsonLayer(mMap, R.raw.boundary,
+                    GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.boundary,
                             getApplicationContext());
                     layer.addLayerToMap();
                     layer.getFeatures();
+                    layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
+                        @Override
+                        public void onFeatureClick(Feature feature) {
+                            GeoJsonLineStringStyle lineStringStyle = new GeoJsonLineStringStyle();
+                            GeoJsonFeature lineStringFeature = (GeoJsonFeature) feature;
+                            lineStringStyle.setColor(Color.RED);
+                            lineStringStyle.setZIndex(10f);
+                            lineStringStyle.setWidth(2f);
+                            lineStringFeature.setLineStringStyle(lineStringStyle);
+                            Log.d(TAG, "onFeatureClick: ");
+
+                        }
+                    });
                     Log.d(TAG, "run: showResponse");
 
                 } catch (IOException e) {
