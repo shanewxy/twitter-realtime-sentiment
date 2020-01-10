@@ -1,6 +1,7 @@
 from backend.database.couchdb_connector import *
 from backend.settings import *
 # from shapely import *
+from django.views.decorators.http import require_http_methods
 from backend.topic_modeling.topic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
@@ -11,6 +12,7 @@ import datetime
 logger = logging.getLogger('django')
 
 
+@require_http_methods(['POST'])
 @csrf_exempt
 def tweet_upload(request):
     """
@@ -35,6 +37,7 @@ def tweet_upload(request):
     return HttpResponse(ujson.dumps(tweet_json))
 
 
+@require_http_methods(['GET'])
 def historic_zones(request):
     """
     An api returning the statistics of all of the tweets in the database historically,
@@ -54,6 +57,7 @@ def historic_zones(request):
     return HttpResponse(ujson.dumps(resp))
 
 
+@require_http_methods(['GET'])
 def realtime_zones(request):
     """
     An api returning the realtime stats of tweets in the designated time period from now,
@@ -99,6 +103,7 @@ def realtime_zones(request):
     return HttpResponse(ujson.dumps(resp))
 
 
+@require_http_methods(['GET'])
 def stats_min_max(request):
     """
     An api returning the historic minimum and max in each zone
@@ -135,6 +140,7 @@ def stats_min_max(request):
     return HttpResponse(ujson.dumps(resp))
 
 
+@require_http_methods(['GET'])
 def top_words(request):
     """
     An api used to query the top hot words
@@ -167,6 +173,7 @@ def top_words(request):
     return HttpResponse(ujson.dumps(resp))
 
 
+@require_http_methods(['GET'])
 def top_topics(request):
     """
     An api used to query the top hot topics
