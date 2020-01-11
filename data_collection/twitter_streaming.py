@@ -30,7 +30,7 @@ class MyStreamListener(StreamListener):
 
     def on_data(self, data):
         try:
-            print(data)
+            # print(data)
             data_object = json.loads(data)
             # store_tweets_locally(filename, data_object)
             store_tweets_db(data_object)
@@ -55,7 +55,7 @@ def store_tweets_db(data_object):
     # double check place here, no idea why Streaming API will return 'New South Wales' or 'Victoria'
     # even if already set the stream filter
     if str(place) != 'New South Wales' and str(place) != 'Victoria':
-        doc_id, doc_rev = requests.post("http://localhost:8080/tweet/upload", json={'text': data_object['text'],
+        r = requests.post("http://localhost:8080/tweet/upload", json={'text': data_object['text'],
                                    'coordinates': data_object['coordinates'],
                                    'created_at': data_object['created_at'],
                                    'sa2_name': sa2_name,
@@ -111,7 +111,7 @@ def sentiment_analyzer_scores(text):
 def get_sa2_name(lat, lon):
 
     url = 'https://mappify.io/api/rpc/coordinates/classify/'
-    payload = {"lat": lat, "lon": lon, "encoding": "sa2", "apiKey": "8d08f36a-d768-4045-9871-640cf7a9ec0e"}
+    payload = {"lat": lat, "lon": lon, "encoding": "sa2", "apiKey": "4934f296-ae11-4fe0-a0ca-69e528d10067"}
     response = requests.post(url, data=json.dumps(payload), headers={'content-type': 'application/json'})
     json_str = json.loads(response.text)
     sa2_name = json_str['result']['name']

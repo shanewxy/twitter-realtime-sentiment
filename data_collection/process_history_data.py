@@ -12,6 +12,7 @@ locations = [143.9631, -38.8136, 145.9631, -36.8136]  # Melbourne's location
 def store_tweet_db(json_obj):
     coord = json_obj['json']['coordinates']['coordinates']
 
+    # To filter some not eligible data
     if coord[0] != 0 and coord[1] != 0 and locations[0] <= coord[0] <= locations[2] \
             and locations[1] <= coord[1] <= locations[3]:
         sa2_name, sa2_code = get_sa2_name(coord[1], coord[0])
@@ -19,7 +20,7 @@ def store_tweet_db(json_obj):
         sa2_name = json_obj['json']['place']['name']
         sa2_code = ""
 
-    doc_id, doc_rev = requests.post("http://localhost:8080/tweet/upload", json={'text': json_obj['json']['text'],
+    r = requests.post("http://localhost:8080/tweet/upload", json={'text': json_obj['json']['text'],
                                'coordinates': json_obj['json']['coordinates']['coordinates'],
                                'created_at': json_obj['json']['created_at'],
                                'sa2_name': sa2_name,
