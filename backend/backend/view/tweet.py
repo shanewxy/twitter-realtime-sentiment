@@ -1,15 +1,18 @@
 from backend.database.couchdb_connector import *
 from backend.settings import *
 # from shapely import *
-import ujson
+from django.views.decorators.http import require_http_methods
+from backend.topic_modeling.topic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import logging
+import ujson
 import datetime
 
 logger = logging.getLogger('django')
 
 
+@require_http_methods(['POST'])
 @csrf_exempt
 def tweet_upload(request):
     """
@@ -34,6 +37,7 @@ def tweet_upload(request):
     return HttpResponse(ujson.dumps(tweet_json))
 
 
+@require_http_methods(['GET'])
 def historic_zones(request):
     """
     An api returning the statistics of all of the tweets in the database historically,
@@ -46,12 +50,14 @@ def historic_zones(request):
     resp = dict()
 
     for row in result:
-        resp[row.key[0]] = {'avg': row.value.get('sum') / row.value.get('count'), 'count': row.value.get('count')}
+        resp[(row.key[0], row.key[1])] = {'avg': row.value.get('sum') / row.value.get('count'),
+                                          'count': row.value.get('count')}
     logger.info("response: %s", resp)
 
     return HttpResponse(ujson.dumps(resp))
 
 
+@require_http_methods(['GET'])
 def realtime_zones(request):
     """
     An api returning the realtime stats of tweets in the designated time period from now,
@@ -72,14 +78,16 @@ def realtime_zones(request):
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
     end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
     for tweet in tweets:
-        place = tweet.value[0]
-        score = tweet.value[1]
-        user = tweet.value[2]
-        if resp.get(place) is None:
-            resp[place] = {'count': 0, 'sum': 0.0, 'users': set()}
-        resp[place]['count'] += 1
-        resp[place]['sum'] += score
-        resp[place]['users'].add(user)
+        name = tweet.value[0]
+        code = tweet.value[1]
+        score = tweet.value[2]
+        user = tweet.value[3]
+        key = (name, code)
+        if resp.get(key) is None:
+            resp[key] = {'count': 0, 'sum': 0.0, 'users': set()}
+        resp[key]['count'] += 1
+        resp[key]['sum'] += score
+        resp[key]['users'].add(user)
 
     for place, score in resp.items():
         resp[place]['avg'] = score['sum'] / score['count']
@@ -95,6 +103,7 @@ def realtime_zones(request):
     return HttpResponse(ujson.dumps(resp))
 
 
+@require_http_methods(['GET'])
 def stats_min_max(request):
     """
     An api returning the historic minimum and max in each zone
@@ -105,7 +114,11 @@ def stats_min_max(request):
     min_stat = dict()
     max_stat = dict()
     for stat in stats:
-        place, start_time, end_time = stat.key
+        name = stat.key[0]
+        code = stat.key[1]
+        start_time = stat.key[2]
+        end_time = stat.key[3]
+        place = (name, code)
         count, score = stat.value
         if min_stat.get(place) is None or score < min_stat[place]["sentiment"]:
             min_stat[place] = dict()
@@ -124,6 +137,72 @@ def stats_min_max(request):
     resp = dict()
     resp["historic_min"] = min_stat
     resp["historic_max"] = max_stat
+    return HttpResponse(ujson.dumps(resp))
+
+
+@require_http_methods(['GET'])
+def top_words(request):
+    """
+    An api used to query the top hot words
+    :param request: contains end time and top limit
+    :return: {start_time, end_time, words}
+    """
+    minute = request.GET.get('minute', default=5)
+    limit = request.GET.get('limit', default=10)
+    resp = dict()
+    now = datetime.datetime.now()
+    now_timestamp = datetime.datetime.timestamp(now)
+
+    start_time = now - datetime.timedelta(minutes=int(minute))
+    start_timestamp = datetime.datetime.timestamp(start_time)
+    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+
+    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
+    end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
+
+    resp['start_time'] = start_time
+    resp['end_time'] = end_time
+
+    text = ""
+    for tweet in tweets:
+        text += tweet.value
+
+    words = common_words(text, limit)
+
+    resp['top_words'] = words
+    return HttpResponse(ujson.dumps(resp))
+
+
+@require_http_methods(['GET'])
+def top_topics(request):
+    """
+    An api used to query the top hot topics
+    :param request: contains end time and top limit
+    :return: {start_time, end_time, topics}
+    """
+    minute = request.GET.get('minute', default=5)
+    limit = request.GET.get('limit', default=10)
+    resp = dict()
+    now = datetime.datetime.now()
+    now_timestamp = datetime.datetime.timestamp(now)
+
+    start_time = now - datetime.timedelta(minutes=int(minute))
+    start_timestamp = datetime.datetime.timestamp(start_time)
+    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+
+    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
+    end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
+
+    resp['start_time'] = start_time
+    resp['end_time'] = end_time
+
+    text = ""
+    for tweet in tweets:
+        text += tweet.value
+
+    words = common_topics(text, limit)
+
+    resp['top_topics'] = words
     return HttpResponse(ujson.dumps(resp))
 
 

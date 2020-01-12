@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('tweet/upload', tweet_upload),
     path('stats/historic', historic_zones),
+    path('stats/realtime/words', top_words),
+    path('stats/realtime/topics', top_topics),
     path('stats/realtime', realtime_zones),
     path('stats/historic/minmax', stats_min_max)
 ]

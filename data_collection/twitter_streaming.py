@@ -4,10 +4,13 @@ from tweepy import Stream
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import json
+import requests
 import couchdb
 import argparse
 import twitter_credentials
 
+# coordinates of Melbourne
+locations = [144.946457, -37.840935, 145.9631, -36.8136]
 
 class TwitterStreamer:
     """
@@ -27,7 +30,7 @@ class MyStreamListener(StreamListener):
 
     def on_data(self, data):
         try:
-            # print(data)
+            print(data)
             data_object = json.loads(data)
             # store_tweets_locally(filename, data_object)
             store_tweets_db(data_object)
@@ -41,14 +44,22 @@ class MyStreamListener(StreamListener):
 
 def store_tweets_db(data_object):
     place = data_object['place']['name']
+    coord = data_object['coordinates']
+
+    if coord is None:
+        sa2_name = data_object['place']['name']
+        sa2_code = ""
+    else:
+        sa2_name, sa2_code = get_sa2_name(coord[1], coord[0])
 
     # double check place here, no idea why Streaming API will return 'New South Wales' or 'Victoria'
     # even if already set the stream filter
     if str(place) != 'New South Wales' and str(place) != 'Victoria':
-        doc_id, doc_rev = db.save({'text': data_object['text'],
+        doc_id, doc_rev = requests.post("http://localhost:8080/tweet/upload", json={'text': data_object['text'],
                                    'coordinates': data_object['coordinates'],
                                    'created_at': data_object['created_at'],
-                                   'place': data_object['place']['name'],
+                                   'sa2_name': sa2_name,
+                                   'sa2_code': sa2_code,
                                    'user_id': data_object['user']['id'],
                                    'user_location': data_object['user']['location'],
                                    'sentiment': sentiment_analyzer_scores(data_object['text'])})
@@ -97,18 +108,26 @@ def sentiment_analyzer_scores(text):
     return sentiment
 
 
+def get_sa2_name(lat, lon):
+
+    url = 'https://mappify.io/api/rpc/coordinates/classify/'
+    payload = {"lat": lat, "lon": lon, "encoding": "sa2", "apiKey": "8d08f36a-d768-4045-9871-640cf7a9ec0e"}
+    response = requests.post(url, data=json.dumps(payload), headers={'content-type': 'application/json'})
+    json_str = json.loads(response.text)
+    sa2_name = json_str['result']['name']
+    sa2_code = json_str['result']['code'][0] + json_str['result']['code'][-4:]
+
+    return sa2_name, sa2_code
+
+
 if __name__ == "__main__":
-    # coordinates of Melbourne
-    locations = [144.9631, -37.8136, 145.9631, -36.8136]
     filename = "tweets.json"
 
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--user", default="admin", type=str, help="couchdb user")
-    # parser.add_argument("--pwd", default="admin", type=str, help="couchdb password")
     parser.add_argument("--server", default="127.0.0.1:5984", type=str, help="couchdb server address")
     args = parser.parse_args()
 
-    # db_server = couchdb.Server("http://%s:%s@%s/" % (args.user, args.pwd, args.server))
+    # db_server = couchdb.Server("http://admin:admin@%s/" % (args.server))
     db_server = couchdb.Server("http://%s/" % args.server)
     args = parser.parse_args()
 
