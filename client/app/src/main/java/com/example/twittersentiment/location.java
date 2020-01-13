@@ -8,6 +8,12 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Camera;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
 import android.graphics.Color;
@@ -38,12 +44,14 @@ import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.data.geojson.GeoJsonLineStringStyle;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
+import com.opencsv.CSVReader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,7 +67,7 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
 
     private GoogleMap mMap;
     private LocationManager locationManager;
-    private String locationProvider;
+    private String locationProvider,suburbName;
     private static final int LOCATION_CODE = 1;
     private Location mLastLocation;
     private String TAG = "location";
@@ -76,9 +84,22 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
         time = (EditText) findViewById(R.id.Time);
         String timeString = time.getText().toString();
         search = findViewById(R.id.button);
+
         search.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                sendHttpRequest();
+                int minute;
+                if(!time.getText().toString().equals("")) {
+                    minute = Integer.parseInt(time.getText().toString());
+                }
+                else {
+                    minute = 600;
+                }
+                Intent intent = new Intent(location.this,result.class);
+                intent.putExtra("suburb", suburbName);
+                intent.putExtra("minute",minute);
+                startActivity(intent);
+//                sendHttpRequest();
+
             }
         });
         try {
@@ -130,6 +151,14 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
                         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,12f));
                         Log.d(TAG, "onLocationChanged: new latlng");
+                        try {
+                            suburbName = getSuburb(location);
+                            Log.d(TAG, "onMapReady: "+suburbName);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
                 };
 
@@ -291,6 +320,31 @@ public class location extends FragmentActivity implements OnMapReadyCallback,
             Log.d(TAG, "onMapReady: e: " + e);
         }
     }
+
+    public String getSuburb(Location location) throws IOException {
+        Geocoder addressCoder = new Geocoder(this);
+        List address = addressCoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+        Address suburb = (Address) address.get(0);
+        String name = suburb.getLocality();
+        try {
+            InputStreamReader is = new InputStreamReader(getResources().openRawResource(R.raw.locality_to_sa2));
+            BufferedReader reader = new BufferedReader(is);
+            reader.readLine();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String item[] = line.split(",");
+                if(name.equalsIgnoreCase(item[1])){
+                    String code =  "2"+item[5].substring(item[5].length()-4);
+                    return "('"+item[6]+"', '"+code+"')";
+                }
+            }
+        } catch (IOException e) {
+            Log.d(TAG, "getSuburb: "+e.getMessage());
+        }
+
+        return  null;
+    }
+
 
 
     @Override

@@ -29,11 +29,13 @@
 
     <EditText
         android:id="@+id/Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="170dp"
+        android:layout_height="48dp"
         android:layout_marginBottom="100dp"
         android:ems="10"
-        android:inputType="time"
+        android:inputType="number"
+        android:minLines="1"
+        android:paddingTop="5dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
