@@ -29,8 +29,10 @@
 
     <EditText
         android:id="@+id/Time"
-        android:layout_width="170dp"
-        android:layout_height="48dp"
+        android:layout_width="160dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:layout_marginBottom="100dp"
         android:ems="10"
         android:inputType="number"
@@ -38,7 +40,6 @@
         android:paddingTop="5dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toBottomOf="@+id/map" />
 
     <Button
@@ -51,6 +52,18 @@
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintHorizontal_bias="0.498"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toBottomOf="@+id/Time" />
+        map:layout_constraintTop_toBottomOf="@+id/Time"
+        map:layout_constraintVertical_bias="0.836" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="160dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="100dp"
+        map:layout_constraintBottom_toBottomOf="parent"
+        map:layout_constraintEnd_toStartOf="@+id/Time"
+        map:layout_constraintHorizontal_bias="0.428"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toTopOf="@+id/guideline2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

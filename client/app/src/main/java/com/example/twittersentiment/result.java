@@ -27,7 +27,7 @@ public class result extends AppCompatActivity {
     private  Integer minute;
     private String suburb;
     private Double hisAverage, realAverage;
-    private TextView hisText,realText;
+    private TextView hisText,realText,topicText;
     private ProgressBar hisBar, realBar;
 
 
@@ -45,6 +45,7 @@ public class result extends AppCompatActivity {
         hisBar = findViewById(R.id.hisBar);
         realText = findViewById(R.id.realAverage);
         realBar = findViewById(R.id.realBar);
+        topicText = findViewById(R.id.topic);
 
 
     }
@@ -77,7 +78,7 @@ public class result extends AppCompatActivity {
                     Log.d(TAG, "run: get the http result"+ hisAverage.toString());
                     Log.d(TAG, "run: "+ realAverage.toString());
                     Log.d(TAG, "run2: "+ topTopics.toString());
-                    showResponse(hisAverage,realAverage);
+                    showResponse(hisAverage,realAverage,(JSONArray)topTopics.get(1));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -147,7 +148,7 @@ public class result extends AppCompatActivity {
         return null;
     }
 
-    private void showResponse(final Double hisAverage, final Double realAverage) {
+    private void showResponse(final Double hisAverage, final Double realAverage, final JSONArray topic) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -157,6 +158,11 @@ public class result extends AppCompatActivity {
                     hisBar.setProgress((int)(hisAverage+1)*50);
                     realText.setText(String.valueOf(realAverage));
                     realBar.setProgress((int)(realAverage+1)*50);
+                    String topTopics = "";
+                    for(int i =0; i<5;i++){
+                        topTopics = topTopics+topic.getString(i)+"\n";
+                    }
+                    topicText.setText(topTopics);
 
 
                 } catch (Exception e) {
