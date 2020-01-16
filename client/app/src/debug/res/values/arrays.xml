@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sa2NameArray">
+        <item>Bright - Mount Beauty</item>
+        <item>Abbotsford</item>
+        <item>Essendon - Aberfeldie</item>
+        <item>Mount Baw Baw Region</item>
+        <item>Alexandra</item>
+        <item>Wonthaggi - Inverloch</item>
+        <item>Creswick - Clunes</item>
+        <item>Maryborough Region</item>
+        <item>Foster</item>
+        <item>Otway</item>
+        <item>Lorne - Anglesea</item>
+        <item>Maffra</item>
+        <item>Airport West</item>
+        <item>Nhill Region</item>
+        <item>Kings Park (Vic.)</item>
+        <item>Albert Park</item>
+        <item>Yarram</item>
+        <item>Ardeer - Albion</item>
+        <item>Alfredton</item>
+        <item>Trafalgar (Vic.)</item>
+        <item>Leongatha</item>
+        <item>Yackandandah</item>
+        <item>Warrnambool - South</item>
+        <item>Glenelg (Vic.)</item>
+        <item>Moira</item>
+        <item>Alphington - Fairfield</item>
+        <item>Altona</item>
+        <item>Altona Meadows</item>
+        <item>Altona North</item>
+        <item>Colac Region</item>
+        <item>Avoca</item>
+        <item>Lara</item>
+        <item>Mansfield (Vic.)</item>
+        <item>Bruthen - Omeo</item>
+        <item>Swan Hill Region</item>
+        <item>Gannawarra</item>
+        <item>Loddon</item>
+        <item>West Wimmera</item>
+        <item>Horsham Region</item>
+        <item>Ararat</item>
+        <item>Korumburra</item>
+        <item>Alps - West</item>
+        <item>Shepparton Region - East</item>
+        <item>Euroa</item>
+        <item>Benalla Region</item>
+        <item>Shepparton Region - West</item>
+        <item>Yarriambiack</item>
+        <item>Heathcote</item>
+        <item>Armadale</item>
+        <item>Ararat Region</item>
+        <item>Ocean Grove - Barwon Heads</item>
+        <item>Panton Hill - St Andrews</item>
+        <item>Dromana</item>
+        <item>White Hills - Ascot</item>
+        <item>Ascot Vale</item>
+        <item>Woodend</item>
+        <item>Ashburton (Vic.)</item>
+        <item>Ashwood - Chadstone</item>
+        <item>Edithvale - Aspendale</item>
+        <item>Aspendale Gardens - Waterways</item>
+        <item>Drouin</item>
+        <item>Gladstone Park - Westmeadows</item>
+        <item>Nagambie</item>
+        <item>St Arnaud</item>
+        <item>Keilor East</item>
+        <item>Bendigo Region - North</item>
+        <item>Emerald - Cockatoo</item>
+        <item>Bendigo Region - South</item>
+        <item>Corangamite - South</item>
+        <item>Bacchus Marsh</item>
+        <item>Healesville - Yarra Glen</item>
+        <item>Bairnsdale</item>
+        <item>Ballarat</item>
+        <item>St Kilda East</item>
+        <item>Bacchus Marsh Region</item>
+        <item>Moyne - East</item>
+        <item>Buloke</item>
+        <item>Ballarat - North</item>
+        <item>Rochester</item>
+        <item>Southern Grampians</item>
+        <item>Hastings - Somers</item>
+        <item>Balwyn</item>
+        <item>Balwyn North</item>
+        <item>Lockington - Gunbower</item>
+        <item>Winchelsea</item>
+        <item>Golden Plains - South</item>
+        <item>Wodonga</item>
+        <item>Dandenong</item>
+        <item>Paynesville</item>
+        <item>Bannockburn</item>
+        <item>Castlemaine Region</item>
+        <item>Gordon (Vic.)</item>
+        <item>Numurkah</item>
+        <item>Chiltern - Indigo Valley</item>
+        <item>West Wodonga</item>
+        <item>Myrtleford</item>
+        <item>Daylesford</item>
+        <item>Somerville</item>
+        <item>Koo Wee Rup</item>
+        <item>Kyneton</item>
+        <item>Bayswater</item>
+        <item>Bayswater North</item>
+        <item>Beaconsfield - Officer</item>
+        <item>Beaufort</item>
+        <item>Beaumaris</item>
+        <item>Beechworth</item>
+        <item>Yarra Valley</item>
+        <item>Belgrave - Selby</item>
+        <item>North Geelong - Bell Park</item>
+        <item>Portarlington</item>
+        <item>Orbost</item>
+        <item>Torquay</item>
+        <item>Towong</item>
+        <item>Stawell</item>
+        <item>Heidelberg West</item>
+        <item>Belmont</item>
+        <item>Benalla</item>
+        <item>Bendigo</item>
+        <item>Romsey</item>
+        <item>Bentleigh - McKinnon</item>
+        <item>Bentleigh East</item>
+        <item>Golden Plains - North</item>
+        <item>Corangamite - North</item>
+        <item>Berwick - South</item>
+        <item>Moyne - West</item>
+        <item>Wallan</item>
+        <item>Mildura Region</item>
+        <item>Kangaroo Flat - Golden Square</item>
+        <item>Merbein</item>
+        <item>Sandringham - Black Rock</item>
+        <item>Blackburn</item>
+        <item>Blackburn South</item>
+        <item>Point Nepean</item>
+        <item>Pearcedale - Tooradin</item>
+        <item>Wangaratta Region</item>
+        <item>Warragul</item>
+        <item>Chelsea - Bonbeach</item>
+        <item>Flinders</item>
+        <item>Delacombe</item>
+        <item>Yallourn North - Glengarry</item>
+        <item>Churchill</item>
+        <item>Longford - Loch Sport</item>
+        <item>Boronia - The Basin</item>
+        <item>Cranbourne South</item>
+        <item>Box Hill</item>
+        <item>Box Hill North</item>
+        <item>Braeside</item>
+        <item>Braybrook</item>
+        <item>Geelong</item>
+        <item>Montmorency - Briar Hill</item>
+        <item>Brighton (Vic.)</item>
+        <item>Brighton East</item>
+        <item>Rutherglen</item>
+        <item>Kilmore - Broadford</item>
+        <item>Broadmeadows</item>
+        <item>Melton South</item>
+        <item>Alps - East</item>
+        <item>Brunswick</item>
+        <item>Brunswick East</item>
+        <item>Brunswick West</item>
+        <item>Greenvale - Bulla</item>
+        <item>Bulleen</item>
+        <item>Gisborne</item>
+        <item>Bundoora - East</item>
+        <item>Buninyong</item>
+        <item>Bunyip - Garfield</item>
+        <item>Rushworth</item>
+        <item>Richmond (Vic.)</item>
+        <item>Caroline Springs</item>
+        <item>Burwood</item>
+        <item>Burwood East</item>
+        <item>Warrnambool - North</item>
+        <item>Cairnlea</item>
+        <item>Taylors Lakes</item>
+        <item>California Gully - Eaglehawk</item>
+        <item>Rosedale</item>
+        <item>Upper Yarra Valley</item>
+        <item>Camberwell</item>
+        <item>Smythes Creek</item>
+        <item>Campbellfield - Coolaroo</item>
+        <item>Castlemaine</item>
+        <item>Camperdown</item>
+        <item>Ballarat - South</item>
+        <item>Surrey Hills (West) - Canterbury</item>
+        <item>Phillip Island</item>
+        <item>Red Cliffs</item>
+        <item>Carlton</item>
+        <item>Carlton North - Princes Hill</item>
+        <item>Carnegie</item>
+        <item>Carrum - Patterson Lakes</item>
+        <item>Carrum Downs</item>
+        <item>Kinglake</item>
+        <item>Caulfield - South</item>
+        <item>Caulfield - North</item>
+        <item>Yea</item>
+        <item>Highton</item>
+        <item>Grovedale</item>
+        <item>Chelsea Heights</item>
+        <item>Cheltenham - Highett (East)</item>
+        <item>Riddells Creek</item>
+        <item>Chirnside Park</item>
+        <item>Clarinda - Oakleigh South</item>
+        <item>Clayton</item>
+        <item>Clayton South</item>
+        <item>Yarra - North</item>
+        <item>Clifton Springs</item>
+        <item>Cranbourne East</item>
+        <item>Cobram</item>
+        <item>Coburg</item>
+        <item>Coburg North</item>
+        <item>Werribee - South</item>
+        <item>Colac</item>
+        <item>Lilydale - Coldstream</item>
+        <item>Collingwood</item>
+        <item>Wentworth - Buronga</item>
+        <item>Corio - Norlane</item>
+        <item>Craigieburn - Mickleham</item>
+        <item>Cranbourne</item>
+        <item>Cranbourne North</item>
+        <item>Cranbourne West</item>
+        <item>Croydon</item>
+        <item>Croydon Hills - Warranwood</item>
+        <item>Dandenong North</item>
+        <item>Deer Park - Derrimut</item>
+        <item>Delahey</item>
+        <item>Wattle Glen - Diamond Creek</item>
+        <item>Sunbury - South</item>
+        <item>Dingley Village</item>
+        <item>Docklands</item>
+        <item>Doncaster</item>
+        <item>Doncaster East</item>
+        <item>Whittlesea</item>
+        <item>Donvale - Park Orchards</item>
+        <item>Horsham</item>
+        <item>South Morang</item>
+        <item>Doveton</item>
+        <item>Ivanhoe East - Eaglemont</item>
+        <item>East Bendigo - Kennington</item>
+        <item>East Melbourne</item>
+        <item>Echuca</item>
+        <item>French Island</item>
+        <item>Elsternwick</item>
+        <item>Eltham</item>
+        <item>Elwood</item>
+        <item>Endeavour Hills</item>
+        <item>Epping</item>
+        <item>Essendon Airport</item>
+        <item>Niddrie - Essendon West</item>
+        <item>Fawkner</item>
+        <item>Ferntree Gully</item>
+        <item>Mount Dandenong - Olinda</item>
+        <item>Fitzroy</item>
+        <item>Fitzroy North</item>
+        <item>Flemington</item>
+        <item>Flora Hill - Spring Gully</item>
+        <item>Traralgon</item>
+        <item>Footscray</item>
+        <item>Forest Hill</item>
+        <item>Frankston</item>
+        <item>Frankston North</item>
+        <item>Frankston South</item>
+        <item>Geelong West - Hamlyn Heights</item>
+        <item>Ormond - Glen Huntly</item>
+        <item>Glen Iris - East</item>
+        <item>Glen Waverley - East</item>
+        <item>Seymour Region</item>
+        <item>Glenroy - Hadfield</item>
+        <item>Shepparton - North</item>
+        <item>Greensborough</item>
+        <item>Wandin - Seville</item>
+        <item>Hallam</item>
+        <item>Hamilton (Vic.)</item>
+        <item>Hampton</item>
+        <item>Hampton Park - Lynbrook</item>
+        <item>Robinvale</item>
+        <item>Narre Warren North</item>
+        <item>Hawthorn</item>
+        <item>Hawthorn East</item>
+        <item>Moorabbin - Heatherton</item>
+        <item>Ringwood East</item>
+        <item>Heidelberg - Rosanna</item>
+        <item>Moe - Newborough</item>
+        <item>Cheltenham - Highett (West)</item>
+        <item>Hillside</item>
+        <item>Hoppers Crossing - North</item>
+        <item>Hughesdale</item>
+        <item>Oakleigh - Huntingdale</item>
+        <item>Hurstbridge</item>
+        <item>Irymple</item>
+        <item>Ivanhoe</item>
+        <item>Strathfieldsaye</item>
+        <item>Lakes Entrance</item>
+        <item>Research - North Warrandyte</item>
+        <item>Kyabram</item>
+        <item>Keilor Downs</item>
+        <item>Keilor</item>
+        <item>Kensington</item>
+        <item>Kerang</item>
+        <item>Kew</item>
+        <item>Kew East</item>
+        <item>Keysborough</item>
+        <item>Shepparton - South</item>
+        <item>Kilsyth</item>
+        <item>Kingsbury</item>
+        <item>Seddon - Kingsville</item>
+        <item>Knoxfield - Scoresby</item>
+        <item>Malvern - Glen Iris</item>
+        <item>Melton</item>
+        <item>Lalor</item>
+        <item>Langwarrin</item>
+        <item>Laverton</item>
+        <item>Leopold</item>
+        <item>Werribee</item>
+        <item>Lynbrook - Lyndhurst</item>
+        <item>Lysterfield</item>
+        <item>Monbulk - Silvan</item>
+        <item>Macedon</item>
+        <item>Viewbank - Yallambie</item>
+        <item>Maiden Gully</item>
+        <item>Malvern East</item>
+        <item>Queenscliff</item>
+        <item>Maribyrnong</item>
+        <item>Maryborough (Vic.)</item>
+        <item>Morwell</item>
+        <item>Rosebud - McCrae</item>
+        <item>Meadow Heights</item>
+        <item>Melbourne</item>
+        <item>Melbourne Airport</item>
+        <item>Melton West</item>
+        <item>Mentone</item>
+        <item>Mildura</item>
+        <item>Mill Park - North</item>
+        <item>Wendouree - Miners Rest</item>
+        <item>Mitcham (Vic.)</item>
+        <item>Surrey Hills (East) - Mont Albert</item>
+        <item>Montrose</item>
+        <item>Newcomb - Moolap</item>
+        <item>Moonee Ponds</item>
+        <item>Moorabbin Airport</item>
+        <item>Mooroolbark</item>
+        <item>Mooroopna</item>
+        <item>Mordialloc - Parkdale</item>
+        <item>Mornington</item>
+        <item>Rockbank - Mount Cottrell</item>
+        <item>Mount Eliza</item>
+        <item>Mount Evelyn</item>
+        <item>Mount Martha</item>
+        <item>Mount Waverley - South</item>
+        <item>Mulgrave</item>
+        <item>Murrumbeena</item>
+        <item>Narre Warren</item>
+        <item>Narre Warren South</item>
+        <item>Newport</item>
+        <item>Newtown (Vic.)</item>
+        <item>Noble Park</item>
+        <item>Noble Park North</item>
+        <item>North Melbourne</item>
+        <item>Northcote</item>
+        <item>Nunawading</item>
+        <item>Pascoe Vale</item>
+        <item>Sunbury</item>
+        <item>Pakenham - South</item>
+        <item>Parkville</item>
+        <item>Pascoe Vale South</item>
+        <item>Plenty - Yarrambat</item>
+        <item>Point Cook</item>
+        <item>Port Melbourne</item>
+        <item>Portland</item>
+        <item>Prahran - Windsor</item>
+        <item>Preston</item>
+        <item>Wyndham Vale</item>
+        <item>Reservoir - East</item>
+        <item>Ringwood</item>
+        <item>Ringwood North</item>
+        <item>Rowville - Central</item>
+        <item>Roxburgh Park - Somerton</item>
+        <item>Sale</item>
+        <item>Skye - Sandhurst</item>
+        <item>Seabrook</item>
+        <item>Seaford (Vic.)</item>
+        <item>Seymour</item>
+        <item>South Melbourne</item>
+        <item>Southbank</item>
+        <item>South Yarra - East</item>
+        <item>Springvale</item>
+        <item>Springvale South</item>
+        <item>St Albans - North</item>
+        <item>St Kilda</item>
+        <item>Strathmore</item>
+        <item>Sunshine</item>
+        <item>Sunshine North</item>
+        <item>Sunshine West</item>
+        <item>Swan Hill</item>
+        <item>Sydenham</item>
+        <item>Tarneit</item>
+        <item>Taylors Hill</item>
+        <item>Upwey - Tecoma</item>
+        <item>Templestowe</item>
+        <item>Templestowe Lower</item>
+        <item>Thomastown</item>
+        <item>Thornbury</item>
+        <item>Wilsons Promontory</item>
+        <item>Toorak</item>
+        <item>West Footscray - Tottenham</item>
+        <item>Truganina</item>
+        <item>Tullamarine</item>
+        <item>Vermont</item>
+        <item>Vermont South</item>
+        <item>Wangaratta</item>
+        <item>Wantirna</item>
+        <item>Wantirna South</item>
+        <item>Warrandyte - Wonga Park</item>
+        <item>Watsonia</item>
+        <item>Albury - South</item>
+        <item>Wheelers Hill</item>
+        <item>Williamstown</item>
+        <item>Yarraville</item>
+        <item>Yarrawonga</item>
+    </string-array>
+</resources>
