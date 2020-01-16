@@ -65,6 +65,9 @@ public class result extends AppCompatActivity {
                         JSONObject history = (JSONObject) his_result.get(suburb);
                         hisAverage = Double.parseDouble(history.getString("avg"));
                     }
+                    else{
+                        hisAverage = 0.0;
+                    }
                     if(!real_result.isNull(suburb)){
                         JSONObject realTime = (JSONObject) real_result.get(suburb);
                         realAverage = Double.parseDouble(realTime.getString("avg"));

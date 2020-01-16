@@ -39,7 +39,6 @@
         android:hint="time in minute"
         android:inputType="number"
         android:minLines="1"
-        android:paddingTop="5dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintHorizontal_bias="1.0"
