@@ -93,7 +93,8 @@ def realtime_zones(request):
         resp[place]['avg'] = score['sum'] / score['count']
         resp[place]['users_count'] = len(resp[place]['users'])
         resp[place].pop('users')
-        stats = {'place': place, 'start_time': start_time, 'end_time': end_time, 'avg': resp[place]['avg'],
+        stats = {'sa2_name': place[0], 'sa2_code': place[1], 'start_time': start_time, 'end_time': end_time,
+                 'avg': resp[place]['avg'],
                  'count': score['count'], 'users_count': resp[place]['users_count']}
         statistics_db.save(stats)
 
