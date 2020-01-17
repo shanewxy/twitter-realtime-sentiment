@@ -175,6 +175,7 @@
         app:cardElevation="8dp"
         card_view:cardCornerRadius="4dp">
 
+
         <TextView
             android:id="@+id/topics"
             android:layout_width="150dp"

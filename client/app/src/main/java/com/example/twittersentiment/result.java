@@ -162,7 +162,7 @@ public class result extends AppCompatActivity {
                     realText.setText(String.valueOf(realAverage));
                     realBar.setProgress((int)(realAverage+1)*50);
                     String topTopics = "";
-                    for(int i =0; i<5;i++){
+                    for(int i =0; i<5& i<topic.length();i++){
                         topTopics = topTopics+topic.getString(i)+"\n";
                     }
                     topicText.setText(topTopics);
