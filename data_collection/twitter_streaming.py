@@ -114,10 +114,12 @@ def get_sa2_name(lat, lon):
     payload = {"lat": lat, "lon": lon, "encoding": "sa2", "apiKey": "4934f296-ae11-4fe0-a0ca-69e528d10067"}
     response = requests.post(url, data=json.dumps(payload), headers={'content-type': 'application/json'})
     json_str = json.loads(response.text)
-    sa2_name = json_str['result']['name']
-    sa2_code = json_str['result']['code'][0] + json_str['result']['code'][-4:]
-
-    return sa2_name, sa2_code
+    if json_str['result'] is not None:
+        sa2_name = json_str['result']['name']
+        sa2_code = json_str['result']['code'][0] + json_str['result']['code'][-4:]
+        return sa2_name, sa2_code
+    else:
+        return "Melbourne", ""
 
 
 if __name__ == "__main__":
