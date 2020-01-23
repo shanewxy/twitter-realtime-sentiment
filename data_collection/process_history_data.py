@@ -1,12 +1,30 @@
 import json
-import time
 import couchdb
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import shapefile
+from shapely.geometry import Point, Polygon
 from twitter_streaming import sentiment_analyzer_scores
-from twitter_streaming import get_sa2_name
-import requests
 
 locations = [143.9631, -38.8136, 145.9631, -36.8136]  # Melbourne's location
+sf = shapefile.Reader("/Users/pengkedi/Documents/twitter-realtime-sentiment/data_collection/1270055001_sa2_2016_aust_shape/SA2_2016_AUST")
+records = sf.records()
+shapes = sf.shapes()
+length = len(records)
+
+
+def get_sa2_info(lon, lat):
+    """
+    get SA2 name and code based on latitude and longtitude.
+    :param lon:
+    :param lat:
+    :return:
+    """
+    p = Point(lon, lat)
+    for i in range(length):
+        poly = Polygon(shapes[i].points)
+        if poly.contains(p):
+            sa2_name = records[i][2]
+            sa2_code = records[i][1]
+            return sa2_name, sa2_code
 
 
 def store_tweet_db(json_obj):
@@ -15,12 +33,12 @@ def store_tweet_db(json_obj):
     # To filter some not eligible data
     if coord[0] != 0 and coord[1] != 0 and locations[0] <= coord[0] <= locations[2] \
             and locations[1] <= coord[1] <= locations[3]:
-        sa2_name, sa2_code = get_sa2_name(coord[1], coord[0])
+        sa2_name, sa2_code = get_sa2_info(coord[0], coord[1])
     else:
         sa2_name = json_obj['json']['place']['name']
         sa2_code = ""
 
-    r = requests.post("http://localhost:8080/tweet/upload", json={'text': json_obj['json']['text'],
+    r = db.save({'text': json_obj['json']['text'],
                                'coordinates': json_obj['json']['coordinates']['coordinates'],
                                'created_at': json_obj['json']['created_at'],
                                'sa2_name': sa2_name,
@@ -78,3 +96,4 @@ if __name__ == "__main__":
                 print(e)
                 continue
 
+    print("Finished")
