@@ -1,11 +1,12 @@
 import json
 import couchdb
 import shapefile
+import requests
 from shapely.geometry import Point, Polygon
 from twitter_streaming import sentiment_analyzer_scores
 
 locations = [143.9631, -38.8136, 145.9631, -36.8136]  # Melbourne's location
-sf = shapefile.Reader("/Users/pengkedi/Documents/twitter-realtime-sentiment/data_collection/1270055001_sa2_2016_aust_shape/SA2_2016_AUST")
+sf = shapefile.Reader("/home/ubuntu/project/1270055001_sa2_2016_aust_shape/SA2_2016_AUST")
 records = sf.records()
 shapes = sf.shapes()
 length = len(records)
@@ -38,7 +39,7 @@ def store_tweet_db(json_obj):
         sa2_name = json_obj['json']['place']['name']
         sa2_code = ""
 
-    r = db.save({'text': json_obj['json']['text'],
+    r = requests.post("http://localhost:8080/tweet/upload", json={'text': json_obj['json']['text'],
                                'coordinates': json_obj['json']['coordinates']['coordinates'],
                                'created_at': json_obj['json']['created_at'],
                                'sa2_name': sa2_name,

@@ -12,7 +12,7 @@ from shapely.geometry import Point, Polygon
 
 # coordinates of Melbourne
 locations = [144.946457, -37.840935, 145.9631, -36.8136]
-sf = shapefile.Reader("/Users/pengkedi/Documents/twitter-realtime-sentiment/data_collection/1270055001_sa2_2016_aust_shape/SA2_2016_AUST")
+sf = shapefile.Reader("/home/ubuntu/project/1270055001_sa2_2016_aust_shape/SA2_2016_AUST")
 records = sf.records()
 shapes = sf.shapes()
 length = len(records)
@@ -61,7 +61,7 @@ def store_tweets_db(data_object):
     # double check place here, no idea why Streaming API will return 'New South Wales' or 'Victoria'
     # even if already set the stream filter
     if str(place) != 'New South Wales' and str(place) != 'Victoria':
-        r = db.save({'text': data_object['text'],
+        r = requests.post("http://localhost:8080/tweet/upload",json={'text': data_object['text'],
                                    'coordinates': data_object['coordinates'],
                                    'created_at': data_object['created_at'],
                                    'sa2_name': sa2_name,
