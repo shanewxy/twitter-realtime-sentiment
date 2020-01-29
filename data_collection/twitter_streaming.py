@@ -52,11 +52,14 @@ def store_tweets_db(data_object):
     place = data_object['place']['name']
     coord = data_object['coordinates']
 
-    if coord is None:
+    if coord is not None:
+        sa2_name, sa2_code = get_sa2_info(coord[0], coord[1])
+    elif str(place) != "Melbourne" and str(place) != 'New South Wales' and str(place) != 'Victoria':
+        bbx = data_object['place']['bounding_box']['coordinates'][0][0]
+        sa2_name, sa2_code = get_sa2_info(bbx[0], bbx[1])
+    else:
         sa2_name = data_object['place']['name']
         sa2_code = ""
-    else:
-        sa2_name, sa2_code = get_sa2_info(coord[0], coord[1])
 
     # double check place here, no idea why Streaming API will return 'New South Wales' or 'Victoria'
     # even if already set the stream filter
