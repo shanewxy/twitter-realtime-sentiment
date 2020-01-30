@@ -3,9 +3,11 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import pandas as pd
 import re
+import string
 
 
 def common_words(content, limit):
+
     tokenized_word = word_tokenize(content)
     stop_words = set(stopwords.words("english"))
     filtered_sent = []
@@ -19,6 +21,7 @@ def common_words(content, limit):
 
 
 def common_topics(content, limit):
+
     # tokenized_word = word_tokenize(content)
     # stop_words = set(stopwords.words("english"))
     filtered_sent = find_hashtags(content)
@@ -32,8 +35,16 @@ def common_topics(content, limit):
 
 
 def find_hashtags(tweet):
+
     '''This function will extract hashtags'''
-    return re.findall('(#[A-Za-z]+[A-Za-z0-9-_]+)', tweet)
+
+    uppers = []
+    hashtags = re.findall('(#[A-Za-z]+[A-Za-z0-9-_]+)', tweet)
+
+    for hashtag in hashtags:
+        uppers.append(hashtag.upper())
+
+    return uppers
 
 
 if __name__ == '__main__':
@@ -49,4 +60,5 @@ if __name__ == '__main__':
     #
     # nltk.download()
     print(common_topics(
-        "#Then tokenize the entire text from all tweets, use Stop Words to remove commonly used words tweets, and extract 10 most common words in the Frequency Distribution of all words.",10))
+        "#Then tokenize #then entire text from all tweets, use Stop Words to remove commonly used words tweets, and extract 10 most common words in the Frequency Distribution of all words.",
+        10))
