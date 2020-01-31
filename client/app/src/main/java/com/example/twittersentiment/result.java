@@ -158,9 +158,9 @@ public class result extends AppCompatActivity {
                 try {
 
                     hisText.setText(String.valueOf(hisAverage));
-                    hisBar.setProgress((int)(hisAverage+1)*50);
+                    hisBar.setProgress((int)(hisAverage+1.0)*50);
                     realText.setText(String.valueOf(realAverage));
-                    realBar.setProgress((int)(realAverage+1)*50);
+                    realBar.setProgress((int)(realAverage+1.0)*50);
                     String topTopics = "";
                     for(int i =0; i<5& i<topic.length();i++){
                         topTopics = topTopics+topic.getString(i)+"\n";

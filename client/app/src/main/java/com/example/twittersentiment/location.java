@@ -31,6 +31,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -52,6 +54,7 @@ import com.google.maps.android.data.geojson.GeoJsonLineStringStyle;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,8 +81,12 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     private Location mLastLocation;
     private String TAG = "location";
     private Button search;
-    private EditText time;
+    private SeekBar timebar;
     private AutoCompleteTextView sa2Name;
+    private GeoJsonLayer layer;
+    private TextView showTime;
+    private int time = 1440;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +95,8 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
-        time = (EditText) findViewById(R.id.Time);
-        String timeString = time.getText().toString();
+        timebar = findViewById(R.id.Time);
+        showTime = (TextView) findViewById(R.id.showTime);
         search = findViewById(R.id.button);
         sa2Name = findViewById(R.id.locationName);
 
@@ -102,31 +109,71 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         // obtain the input of the SA2 name
 //        sa2Name.getOnItemSelectedListener()
 
+        // listen the seekbar and obtain the time
+        timebar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.i(TAG,"onProgressChanged=" +progress);
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.i(TAG,"onStartTrackingTouch=");
+            }
 
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int seekProgress = seekBar.getProgress();
+                if(seekProgress==0){
+                    time = 1; // 1 min
+                    showTime.setText("Last 1 minute");
+                }else if(seekProgress==1){
+                    time = 10; // 10 mins
+                    showTime.setText("Last 10 minute");
+                }else if(seekProgress==2){
+                    time = 60; // 1 hour
+                    showTime.setText("Last 1 hour");
+                }else if(seekProgress==3){
+                    time = 60*24; // 1 day
+                    showTime.setText("Last 1 day");
+                }else if(seekProgress==4){
+                    time = 60*24*7; // 1 week
+                    showTime.setText("Last 1 week");
+                }else if(seekProgress==5){
+                    time = 60*24*7*2;
+                    showTime.setText("Last 2 weeks");
+                }else if(seekProgress==6) {
+                    time = 60 * 24 * 7 * 4;
+                    showTime.setText("Last 1 month");
+                }
+                Log.i(TAG,"onStopTrackingTouch=");
+            }
+        });
+
+        // listen the search button
         search.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                int minute;
-                if(!time.getText().toString().equals("")) {
-                    minute = Integer.parseInt(time.getText().toString());
-                }
-                else {
-                    minute = 600;
-                }
-                Intent intent = new Intent(location.this,result.class);
-                if (!sa2Name.getText().toString().equals("")){
-                    String enteredName = sa2Name.getText().toString();
-                    String enteredSuburbName = getQueryName(enteredName);
-                    intent.putExtra("suburb",enteredSuburbName);
-                }
-                else{
-                    intent.putExtra("suburb", suburbName);
-                }
-                intent.putExtra("minute",minute);
-                startActivity(intent);
+
+                sendHttpRequest();
+
+
+//                Intent intent = new Intent(location.this,result.class);
+//                if (!sa2Name.getText().toString().equals("")){
+//                    String enteredName = sa2Name.getText().toString();
+//                    String enteredSuburbName = getQueryName(enteredName);
+//                    intent.putExtra("suburb",enteredSuburbName);
+//                }
+//                else{
+//                    intent.putExtra("suburb", suburbName);
+//                }
+//                intent.putExtra("minute",time);
+//                startActivity(intent);
 
             }
         });
+
+
+        //  get the location permission
         try {
             if (ActivityCompat.checkSelfPermission(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -190,11 +237,15 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                 locationManager.requestLocationUpdates(locationProvider,3000, 1,locationListener);
                 mapFragment.getMapAsync(this);
 
+
+
             }
         }catch(Exception e){
                 Log.d(TAG, "onCreate: " + e);
         }
     }
+
+
 
     /**
      * Manipulates the map once available.
@@ -214,6 +265,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             if(mLastLocation != null) {
                 LatLng latlng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12f));
+
 
             }
 
@@ -270,6 +322,9 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
 
 
 
+
+
+
     @Override
     public void onLocationChanged(Location location) {
 
@@ -308,5 +363,133 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
+    }
+
+    public  void sendHttpRequest(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time);
+                    HttpURLConnection connection = (HttpURLConnection) realURL.openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.connect();
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        InputStream input = connection.getInputStream();
+                        JSONObject real_result = getJsonObject(input);
+                        showMapResult(real_result);
+                        connection.disconnect();
+                    }
+                    else{
+                        networkError();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "run: " + e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "run: " + e.getMessage());
+                }
+            }
+
+        }).start();
+    }
+
+    private void showMapResult(final JSONObject real_result){
+        runOnUiThread(new  Runnable(){
+            public void run(){
+                try {
+                    layer = new GeoJsonLayer(mMap, R.raw.boundary,getApplicationContext());
+                    GeoJsonPolygonStyle polygonStyle = layer.getDefaultPolygonStyle();
+                    polygonStyle.setClickable(true);
+                    polygonStyle.setStrokeColor(Color.BLUE);
+                    polygonStyle.setStrokeWidth(2);
+                    if(real_result!=null) {
+                        for (GeoJsonFeature feature : layer.getFeatures()) {
+                            String name = "('" + feature.getProperty("name") + "', '" + feature.getProperty("code_1") + "')";
+                            if (!real_result.isNull(name)) {
+                                Log.d(TAG, "onClick: " + name);
+                                JSONObject realTime = (JSONObject) real_result.get(name);
+                                GeoJsonPolygonStyle style = new GeoJsonPolygonStyle();
+                                style.setStrokeColor(Color.BLUE);
+                                style.setStrokeWidth(2);
+                                style.setClickable(true);
+                                if (Double.parseDouble(realTime.getString("avg")) > 0) {
+                                    style.setFillColor(Color.RED);
+                                    feature.setPolygonStyle(style);
+                                }else if(Double.parseDouble(realTime.getString("avg")) ==0){
+                                    style.setFillColor(Color.YELLOW);
+                                    feature.setPolygonStyle(style);
+                                }else {
+                                    style.setFillColor(Color.BLUE);
+                                    feature.setPolygonStyle(style);
+                                }
+
+                            }
+                        }
+                    }
+                    layer.addLayerToMap();
+                    layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
+                        @Override
+                        public void onFeatureClick(Feature feature) {
+                            Toast.makeText(location.this,
+                                    "Feature clicked: " + feature.getProperty("name"),
+                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(location.this,result.class);
+                            intent.putExtra("suburb","('"+feature.getProperty("name")+"', '"+feature.getProperty("code_1")+"')" );
+                            intent.putExtra("minute",time);
+                            startActivity(intent);
+                        }
+                    });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+
+
+    private void networkError(){
+        runOnUiThread((new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(location.this,"Network Error",Toast.LENGTH_SHORT);
+                Log.d(TAG, "run: network error");
+            }
+        }));
+    }
+
+
+
+
+    //Returns a json object from an input stream
+    private JSONObject getJsonObject(InputStream input){
+
+        try {
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+            StringBuilder responseStrBuilder = new StringBuilder();
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null)
+                responseStrBuilder.append(inputStr);
+
+            JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+
+            //returns the json object
+            return jsonObject;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //if something went wrong, return null
+        return null;
     }
 }
