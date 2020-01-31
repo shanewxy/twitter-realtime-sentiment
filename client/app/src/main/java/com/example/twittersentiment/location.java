@@ -371,19 +371,21 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             public void run() {
                 try {
                     URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time);
-                    HttpURLConnection connection = (HttpURLConnection) realURL.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.connect();
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode == HttpURLConnection.HTTP_OK) {
-                        InputStream input = connection.getInputStream();
-                        JSONObject real_result = getJsonObject(input);
-                        showMapResult(real_result);
-                        connection.disconnect();
-                    }
-                    else{
-                        networkError();
-                    }
+                    JSONObject real_result = getHttpConnection(realURL);
+                    showMapResult(real_result);
+//                    HttpURLConnection connection = (HttpURLConnection) realURL.openConnection();
+//                    connection.setRequestMethod("GET");
+//                    connection.connect();
+//                    int responseCode = connection.getResponseCode();
+//                    if (responseCode == HttpURLConnection.HTTP_OK) {
+//                        InputStream input = connection.getInputStream();
+//                        JSONObject real_result = getJsonObject(input);
+//                        showMapResult(real_result);
+//                        connection.disconnect();
+//                    }
+//                    else{
+//                        networkError();
+//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d(TAG, "run: " + e.getMessage());
@@ -415,17 +417,21 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                                 style.setStrokeColor(Color.BLUE);
                                 style.setStrokeWidth(2);
                                 style.setClickable(true);
-                                if (Double.parseDouble(realTime.getString("avg")) > 0) {
-                                    style.setFillColor(Color.RED);
-                                    feature.setPolygonStyle(style);
-                                }else if(Double.parseDouble(realTime.getString("avg")) ==0){
-                                    style.setFillColor(Color.YELLOW);
-                                    feature.setPolygonStyle(style);
+                                float average = Float.parseFloat(realTime.getString("avg"));
+                                float[] color = new float[3];
+                                if (average > 0) {
+                                    Color.colorToHSV(Color.RED, color);
+                                    color[1] = color[1]+ average;
+                                }else if(average ==0){
+                                    Color.colorToHSV(Color.YELLOW, color);
                                 }else {
-                                    style.setFillColor(Color.BLUE);
-                                    feature.setPolygonStyle(style);
+                                    Color.colorToHSV(Color.BLUE, color);
+                                    color[1] = color[1]- average;
                                 }
-
+//                                color[1] = color[1]+ average;
+//                                color[2] = color[2]- average;
+                                style.setFillColor(Color.HSVToColor(color));
+                                feature.setPolygonStyle(style);
                             }
                         }
                     }
@@ -491,5 +497,27 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
 
         //if something went wrong, return null
         return null;
+    }
+
+    private JSONObject getHttpConnection(URL url){
+        try {
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if(responseCode == HttpURLConnection.HTTP_OK  ){
+                InputStream input = connection.getInputStream();
+                JSONObject result =  getJsonObject(input);
+                connection.disconnect();
+                return result;
+            }
+            else{
+                networkError();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 }
