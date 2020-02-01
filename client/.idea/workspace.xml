@@ -11,12 +11,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="129b9910-de43-4b54-918f-530222958642" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_location.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_location.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/boundary.json" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,21 +39,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="646">
-              <caret line="416" column="57" selection-start-line="416" selection-start-column="57" selection-end-line="416" selection-end-column="57" />
-              <folding>
-                <element signature="e#13171#13172#0" expanded="true" />
-                <element signature="e#13199#13200#0" expanded="true" />
-                <element signature="e#13259#14816#0" expanded="true" />
-                <element signature="e#14815#14816#0" expanded="true" />
-                <element signature="e#14568#17349#0" expanded="true" />
-                <element signature="e#15629#16366#0" expanded="true" />
-                <element signature="e#16365#16366#0" expanded="true" />
-                <element signature="e#17348#17349#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="38">
+              <caret line="353" column="20" selection-start-line="353" selection-start-column="20" selection-end-line="353" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -71,15 +58,11 @@
           <provider editor-type-id="android-designer2" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="57" column="66" selection-start-line="57" selection-start-column="66" selection-end-line="57" selection-end-column="66" />
-              <folding>
-                <element signature="e#1450#3415#0" expanded="true" />
-                <element signature="e#3414#3415#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="1805">
+              <caret line="113" column="5" selection-start-line="93" selection-start-column="3" selection-end-line="113" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -150,7 +133,13 @@
             <path>
               <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+            </path>
+            <path>
+              <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="raw" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
             <path>
               <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
@@ -160,7 +149,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -190,25 +178,23 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/drawable-v24" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/raw" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\study\project\wholeProject\wholeTwitterAPP\client\app\src\main\res\drawable-v24" />
-      <recent name="E:\study\project\wholeProject\wholeTwitterAPP\client\app\src\main\res\drawable" />
-      <recent name="E:\study\project\wholeProject\wholeTwitterAPP\client\app\src\main\res\raw" />
       <recent name="E:\study\project\app\src\main\res\raw" />
-      <recent name="E:\study\project\app\src\debug\res\values" />
     </key>
     <key name="android.template.packageName">
       <recent name="com.example.twittersentiment" />
@@ -216,9 +202,12 @@
     <key name="android.template.parentActivityClass">
       <recent name="" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\study\project\wholeProject\wholeTwitterAPP\client\app\src\main\res\raw" />
       <recent name="E:\study\project\wholeProject\wholeTwitterAPP\client\app\src\main\res\drawable-v24" />
+      <recent name="E:\study\project\wholeProject\wholeTwitterAPP\client\app\src\main\res\drawable" />
       <recent name="E:\study\project\app\src\main\res\raw" />
+      <recent name="E:\study\project\app\src\debug\res\values" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -376,7 +365,21 @@
       <option name="project" value="LOCAL" />
       <updated>1579234478252</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="colorful polygon">
+      <created>1580462467789</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1580462467789</updated>
+    </task>
+    <task id="LOCAL-00012" summary="colorful polygon">
+      <created>1580482766842</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1580482766842</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView">
@@ -402,13 +405,13 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Run" order="0" weight="0.3286119" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.49932975" visible="true" weight="0.34419262" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.49932975" visible="true" weight="0.40084985" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.3286119" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3286119" />
       <window_info anchor="bottom" id="Terminal" order="4" weight="0.28045326" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.50067025" side_tool="true" weight="0.3286119" />
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.3286119" />
-      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.49932975" weight="0.32294616" />
+      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.49932975" weight="0.32152975" />
       <window_info anchor="bottom" id="Android Profiler" order="8" weight="0.32956153" />
       <window_info anchor="bottom" id="Find" order="9" weight="0.30028328" />
       <window_info anchor="bottom" id="Messages" order="10" sideWeight="0.49932975" weight="0.17847025" />
@@ -457,10 +460,28 @@
     <MESSAGE value="add location choice" />
     <MESSAGE value="UI" />
     <MESSAGE value="fix topic &lt;5" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix topic &lt;5" />
+    <MESSAGE value="colorful polygon" />
+    <option name="LAST_COMMIT_MESSAGE" value="colorful polygon" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java</url>
+          <line>370</line>
+          <properties />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java</url>
+          <line>404</line>
+          <properties />
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/wholeProject/wholeTwitterAPP/client/app/src/debug/res/values/google_maps_api.xml" />
     <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/51a955e1cd7326b74b8fc424f5b42fa4/jetified-play-services-maps-16.1.0/jars/classes.jar!/com/google/android/gms/maps/internal/zzg.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
@@ -489,37 +510,8 @@
     <entry file="file://$PROJECT_DIR$/wholeProject/wholeTwitterAPP/client/app/src/main/res/raw/boundary.json" />
     <entry file="file://$PROJECT_DIR$/wholeProject/wholeTwitterAPP/client/app/build.gradle" />
     <entry file="file://$PROJECT_DIR$/wholeProject/wholeTwitterAPP/client/app/src/main/res/raw/tryboundary.json" />
-    <entry file="jar://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-29/android.jar!/android/content/ContextWrapper.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="71" column="19" selection-start-line="71" selection-start-column="19" selection-end-line="71" selection-end-column="19" />
-          <folding>
-            <element signature="e#2053#2054#0" expanded="true" />
-            <element signature="e#2104#2105#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/geojson/GeoJsonLayer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="65" column="36" selection-start-line="65" selection-start-column="36" selection-end-line="65" selection-end-column="36" />
-          <folding>
-            <element signature="e#2305#2306#0" expanded="true" />
-            <element signature="e#2347#2348#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wholeProject/wholeTwitterAPP/client/build.gradle" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/Layer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="121" column="39" selection-start-line="121" selection-start-column="39" selection-end-line="121" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/MainActivity.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
     <entry file="jar://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-29/android.jar!/android/app/Instrumentation.class">
@@ -650,11 +642,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/raw/boundary.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1344828" />
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/geojson/GeoJsonFeature.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="134">
@@ -665,14 +652,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_location.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" column="38" selection-start-line="11" selection-start-column="38" selection-end-line="11" selection-end-column="38" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="241">
@@ -681,31 +660,92 @@
       </provider>
       <provider editor-type-id="android-manifest" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java">
+    <entry file="jar://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-29/android.jar!/android/content/ContextWrapper.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="416" column="57" selection-start-line="416" selection-start-column="57" selection-end-line="416" selection-end-column="57" />
+        <state relative-caret-position="22">
+          <caret line="51" column="21" selection-start-line="51" selection-start-column="21" selection-end-line="51" selection-end-column="21" />
           <folding>
-            <element signature="e#13171#13172#0" expanded="true" />
-            <element signature="e#13199#13200#0" expanded="true" />
-            <element signature="e#13259#14816#0" expanded="true" />
-            <element signature="e#14815#14816#0" expanded="true" />
-            <element signature="e#14568#17349#0" expanded="true" />
-            <element signature="e#15629#16366#0" expanded="true" />
-            <element signature="e#16365#16366#0" expanded="true" />
-            <element signature="e#17348#17349#0" expanded="true" />
+            <element signature="e#1574#1575#0" expanded="true" />
+            <element signature="e#1625#1626#0" expanded="true" />
+            <element signature="e#2053#2054#0" expanded="true" />
+            <element signature="e#2104#2105#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/raw/victoria_sa2.json">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/raw/boundary.json">
+      <provider selected="true" editor-type-id="LargeFileEditor">
+        <state relative-caret-position="95">
+          <caret column="888" selection-start-column="888" selection-end-column="888" />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="-1344828" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_location.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" column="38" selection-start-line="11" selection-start-column="38" selection-end-line="11" selection-end-column="38" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="57" column="66" selection-start-line="57" selection-start-column="66" selection-end-line="57" selection-end-column="66" />
+        <state relative-caret-position="1805">
+          <caret line="113" column="5" selection-start-line="93" selection-start-column="3" selection-end-line="113" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/geojson/GeoJsonPolygon.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-56">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/geojson/GeoJsonRenderer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="47" selection-start-line="47" selection-end-line="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/Renderer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="273" selection-start-line="273" selection-end-line="273" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/raw/victoria.json">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/Layer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="42" selection-start-line="42" selection-end-line="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1d72251f77068827fd45526d797f3806/android-maps-utils-0.6.2/jars/classes.jar!/com/google/maps/android/data/geojson/GeoJsonLayer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="62" selection-start-line="62" selection-end-line="62" />
           <folding>
-            <element signature="e#1450#3415#0" expanded="true" />
-            <element signature="e#3414#3415#0" expanded="true" />
+            <element signature="e#2252#2253#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="353" column="20" selection-start-line="353" selection-start-column="20" selection-end-line="353" selection-end-column="20" />
         </state>
       </provider>
     </entry>

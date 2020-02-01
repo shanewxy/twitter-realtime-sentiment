@@ -4,69 +4,49 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-import android.Manifest;
-import android.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Camera;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-import android.content.pm.PackageManager;
-import android.graphics.Camera;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationAvailability;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.data.geojson.GeoJsonLineStringStyle;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 
@@ -83,7 +63,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     private Button search;
     private SeekBar timebar;
     private AutoCompleteTextView sa2Name;
-    private GeoJsonLayer layer;
     private TextView showTime;
     private int time = 1440;
 
@@ -153,7 +132,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         // listen the search button
         search.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-
+                Log.d(TAG, "onClick: search button clicked");
                 sendHttpRequest();
 
 
@@ -371,21 +350,8 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             public void run() {
                 try {
                     URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time);
-                    JSONObject real_result = getHttpConnection(realURL);
-                    showMapResult(real_result);
-//                    HttpURLConnection connection = (HttpURLConnection) realURL.openConnection();
-//                    connection.setRequestMethod("GET");
-//                    connection.connect();
-//                    int responseCode = connection.getResponseCode();
-//                    if (responseCode == HttpURLConnection.HTTP_OK) {
-//                        InputStream input = connection.getInputStream();
-//                        JSONObject real_result = getJsonObject(input);
-//                        showMapResult(real_result);
-//                        connection.disconnect();
-//                    }
-//                    else{
-//                        networkError();
-//                    }
+                    getHttpConnection(realURL);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d(TAG, "run: " + e.getMessage());
@@ -402,14 +368,15 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         runOnUiThread(new  Runnable(){
             public void run(){
                 try {
-                    layer = new GeoJsonLayer(mMap, R.raw.boundary,getApplicationContext());
+                    GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.victoria,getApplicationContext());
                     GeoJsonPolygonStyle polygonStyle = layer.getDefaultPolygonStyle();
                     polygonStyle.setClickable(true);
                     polygonStyle.setStrokeColor(Color.BLUE);
                     polygonStyle.setStrokeWidth(2);
+                    Log.d(TAG, "run: "+real_result);
                     if(real_result!=null) {
                         for (GeoJsonFeature feature : layer.getFeatures()) {
-                            String name = "('" + feature.getProperty("name") + "', '" + feature.getProperty("code_1") + "')";
+                            String name = "('" + feature.getProperty("SA2_NAME16") + "', '" + feature.getProperty("SA2_5DIG16") + "')";
                             if (!real_result.isNull(name)) {
                                 Log.d(TAG, "onClick: " + name);
                                 JSONObject realTime = (JSONObject) real_result.get(name);
@@ -440,10 +407,10 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                         @Override
                         public void onFeatureClick(Feature feature) {
                             Toast.makeText(location.this,
-                                    "Feature clicked: " + feature.getProperty("name"),
+                                    "Feature clicked: " + feature.getProperty("SA2_NAME16"),
                                     Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(location.this,result.class);
-                            intent.putExtra("suburb","('"+feature.getProperty("name")+"', '"+feature.getProperty("code_1")+"')" );
+                            intent.putExtra("suburb","('"+feature.getProperty("SA2_NAME16")+"', '"+feature.getProperty("SA2_5DIG16")+"')" );
                             intent.putExtra("minute",time);
                             startActivity(intent);
                         }
@@ -499,7 +466,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         return null;
     }
 
-    private JSONObject getHttpConnection(URL url){
+    private void getHttpConnection(URL url){
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -508,16 +475,17 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             if(responseCode == HttpURLConnection.HTTP_OK  ){
                 InputStream input = connection.getInputStream();
                 JSONObject result =  getJsonObject(input);
+                showMapResult(result);
                 connection.disconnect();
-                return result;
+
             }
             else{
                 networkError();
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d(TAG, "getHttpConnection: "+e.getMessage());
         }
-        return null;
 
     }
 }
