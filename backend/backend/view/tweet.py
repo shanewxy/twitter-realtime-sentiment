@@ -84,17 +84,27 @@ def realtime_zones(request):
         user = tweet.value[3]
         key = (name, code)
         if resp.get(key) is None:
-            resp[key] = {'count': 0, 'sum': 0.0, 'users': set()}
+            resp[key] = {'count': 0, 'sum': 0.0, 'users': set(), 'positive': 0, 'negative': 0, 'neutral': 0}
         resp[key]['count'] += 1
         resp[key]['sum'] += score
         resp[key]['users'].add(user)
+        # numbers of tweets that are neutral, positive and negative
+        if score > 0:
+            resp[key]['positive'] += 1
+        elif score < 0:
+            resp[key]['negative'] += 1
+        else:
+            resp[key]['neutral'] += 1
 
     for place, score in resp.items():
         resp[place]['avg'] = score['sum'] / score['count']
         resp[place]['users_count'] = len(resp[place]['users'])
         resp[place].pop('users')
-        stats = {'place': place, 'start_time': start_time, 'end_time': end_time, 'avg': resp[place]['avg'],
-                 'count': score['count'], 'users_count': resp[place]['users_count']}
+        stats = {'sa2_name': place[0], 'sa2_code': place[1], 'start_time': start_time, 'end_time': end_time,
+                 'avg': resp[place]['avg'],
+                 'count': score['count'], 'users_count': resp[place]['users_count'],
+                 'positive': resp[place]['positive'], 'negative': resp[place]['negative'],
+                 'neutral': resp[place]['neutral']}
         statistics_db.save(stats)
 
     resp['start_time'] = start_time

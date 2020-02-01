@@ -1,16 +1,22 @@
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
-from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import json
 import requests
 import couchdb
 import argparse
 import twitter_credentials
+import shapefile
+from shapely.geometry import Point, Polygon
 
 # coordinates of Melbourne
 locations = [144.946457, -37.840935, 145.9631, -36.8136]
+sf = shapefile.Reader("/home/ubuntu/project/1270055001_sa2_2016_aust_shape/SA2_2016_AUST")
+records = sf.records()
+shapes = sf.shapes()
+length = len(records)
+
 
 class TwitterStreamer:
     """
@@ -30,7 +36,7 @@ class MyStreamListener(StreamListener):
 
     def on_data(self, data):
         try:
-            # print(data)
+            print(data)
             data_object = json.loads(data)
             # store_tweets_locally(filename, data_object)
             store_tweets_db(data_object)
@@ -46,16 +52,19 @@ def store_tweets_db(data_object):
     place = data_object['place']['name']
     coord = data_object['coordinates']
 
-    if coord is None:
+    if coord is not None:
+        sa2_name, sa2_code = get_sa2_info(coord[0], coord[1])
+    elif str(place) != "Melbourne" and str(place) != 'New South Wales' and str(place) != 'Victoria':
+        bbx = data_object['place']['bounding_box']['coordinates'][0][0]
+        sa2_name, sa2_code = get_sa2_info(bbx[0], bbx[1])
+    else:
         sa2_name = data_object['place']['name']
         sa2_code = ""
-    else:
-        sa2_name, sa2_code = get_sa2_name(coord[1], coord[0])
 
     # double check place here, no idea why Streaming API will return 'New South Wales' or 'Victoria'
     # even if already set the stream filter
     if str(place) != 'New South Wales' and str(place) != 'Victoria':
-        r = requests.post("http://localhost:8080/tweet/upload", json={'text': data_object['text'],
+        r = requests.post("http://localhost:8080/tweet/upload",json={'text': data_object['text'],
                                    'coordinates': data_object['coordinates'],
                                    'created_at': data_object['created_at'],
                                    'sa2_name': sa2_name,
@@ -114,10 +123,27 @@ def get_sa2_name(lat, lon):
     payload = {"lat": lat, "lon": lon, "encoding": "sa2", "apiKey": "4934f296-ae11-4fe0-a0ca-69e528d10067"}
     response = requests.post(url, data=json.dumps(payload), headers={'content-type': 'application/json'})
     json_str = json.loads(response.text)
-    sa2_name = json_str['result']['name']
-    sa2_code = json_str['result']['code'][0] + json_str['result']['code'][-4:]
+    if json_str['result'] is not None:
+        sa2_name = json_str['result']['name']
+        sa2_code = json_str['result']['code'][0] + json_str['result']['code'][-4:]
+        return sa2_name, sa2_code
+    else:
+        return "Melbourne", ""
 
-    return sa2_name, sa2_code
+def get_sa2_info(lon, lat):
+    """
+    get SA2 name and code based on latitude and longtitude.
+    :param lon:
+    :param lat:
+    :return:
+    """
+    p = Point(lon, lat)
+    for i in range(length):
+        poly = Polygon(shapes[i].points)
+        if poly.contains(p):
+            sa2_name = records[i][2]
+            sa2_code = records[i][1]
+            return sa2_name, sa2_code
 
 
 if __name__ == "__main__":
