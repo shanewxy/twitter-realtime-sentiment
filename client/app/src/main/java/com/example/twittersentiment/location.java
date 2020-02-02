@@ -61,10 +61,8 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     private Location mLastLocation;
     private String TAG = "location";
     private Button search;
-    private SeekBar timebar;
     private AutoCompleteTextView sa2Name;
-    private TextView showTime;
-    private int time = 1440;
+    private int time;
 
 
     @Override
@@ -74,10 +72,10 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
-        timebar = findViewById(R.id.Time);
-        showTime = (TextView) findViewById(R.id.showTime);
         search = findViewById(R.id.button);
         sa2Name = findViewById(R.id.locationName);
+        Intent getIntent = getIntent();
+        time = getIntent.getIntExtra("minute",1440);
 
         // the autoCompeleteTextView
         Resources resources = getResources();
@@ -88,65 +86,23 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         // obtain the input of the SA2 name
 //        sa2Name.getOnItemSelectedListener()
 
-        // listen the seekbar and obtain the time
-        timebar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.i(TAG,"onProgressChanged=" +progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                Log.i(TAG,"onStartTrackingTouch=");
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int seekProgress = seekBar.getProgress();
-                if(seekProgress==0){
-                    time = 1; // 1 min
-                    showTime.setText("Last 1 minute");
-                }else if(seekProgress==1){
-                    time = 10; // 10 mins
-                    showTime.setText("Last 10 minute");
-                }else if(seekProgress==2){
-                    time = 60; // 1 hour
-                    showTime.setText("Last 1 hour");
-                }else if(seekProgress==3){
-                    time = 60*24; // 1 day
-                    showTime.setText("Last 1 day");
-                }else if(seekProgress==4){
-                    time = 60*24*7; // 1 week
-                    showTime.setText("Last 1 week");
-                }else if(seekProgress==5){
-                    time = 60*24*7*2;
-                    showTime.setText("Last 2 weeks");
-                }else if(seekProgress==6) {
-                    time = 60 * 24 * 7 * 4;
-                    showTime.setText("Last 1 month");
-                }
-                Log.i(TAG,"onStopTrackingTouch=");
-            }
-        });
 
         // listen the search button
         search.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 Log.d(TAG, "onClick: search button clicked");
-                sendHttpRequest();
 
-
-//                Intent intent = new Intent(location.this,result.class);
-//                if (!sa2Name.getText().toString().equals("")){
-//                    String enteredName = sa2Name.getText().toString();
-//                    String enteredSuburbName = getQueryName(enteredName);
-//                    intent.putExtra("suburb",enteredSuburbName);
-//                }
-//                else{
-//                    intent.putExtra("suburb", suburbName);
-//                }
-//                intent.putExtra("minute",time);
-//                startActivity(intent);
+                Intent intent = new Intent(location.this,result.class);
+                if (!sa2Name.getText().toString().equals("")){
+                    String enteredName = sa2Name.getText().toString();
+                    String enteredSuburbName = getQueryName(enteredName);
+                    intent.putExtra("suburb",enteredSuburbName);
+                }
+                else{
+                    intent.putExtra("suburb", suburbName);
+                }
+                intent.putExtra("minute",time);
+                startActivity(intent);
 
             }
         });
@@ -215,6 +171,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
 
                 locationManager.requestLocationUpdates(locationProvider,3000, 1,locationListener);
                 mapFragment.getMapAsync(this);
+                sendHttpRequest();
 
 
 
@@ -244,6 +201,8 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             if(mLastLocation != null) {
                 LatLng latlng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12f));
+                suburbName = getSuburb(mLastLocation);
+
 
 
             }
@@ -385,18 +344,17 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                                 style.setStrokeWidth(2);
                                 style.setClickable(true);
                                 float average = Float.parseFloat(realTime.getString("avg"));
-                                float[] color = new float[3];
+                                float[] color = new float[]{6,0.9f,0.9f};
                                 if (average > 0) {
-                                    Color.colorToHSV(Color.RED, color);
-                                    color[1] = color[1]+ average;
+                                    color[1] = color[1]- average*0.1f;
+                                    color[2] = color[2]- average*0.3f;
                                 }else if(average ==0){
-                                    Color.colorToHSV(Color.YELLOW, color);
+                                    color[0] = 48;
                                 }else {
-                                    Color.colorToHSV(Color.BLUE, color);
-                                    color[1] = color[1]- average;
+                                    color[0] = 204f;
+                                    color[1] = color[1]+ average*0.1f;
+                                    color[2] = color[2]+ average*0.3f;
                                 }
-//                                color[1] = color[1]+ average;
-//                                color[2] = color[2]- average;
                                 style.setFillColor(Color.HSVToColor(color));
                                 feature.setPolygonStyle(style);
                             }

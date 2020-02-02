@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 public class result extends AppCompatActivity {
 
@@ -40,6 +41,8 @@ public class result extends AppCompatActivity {
         Intent getIntent = getIntent();
         minute = getIntent.getIntExtra("minute",600);
         suburb = getIntent.getStringExtra("suburb");
+        TextView suburbName = findViewById(R.id.subName);
+        suburbName.setText(suburb.split("'")[1]);
         sendHttpRequest();
         hisText = findViewById(R.id.hisAverge);
         hisBar = findViewById(R.id.hisBar);
@@ -156,11 +159,10 @@ public class result extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
-                    hisText.setText(String.valueOf(hisAverage));
-                    hisBar.setProgress((int)(hisAverage+1.0)*50);
-                    realText.setText(String.valueOf(realAverage));
-                    realBar.setProgress((int)(realAverage+1.0)*50);
+                    hisText.setText(String.format("%.4f", hisAverage));
+                    hisBar.setProgress((int)((hisAverage+1.0)*50));
+                    realText.setText(String.format("%.4f",realAverage));
+                    realBar.setProgress((int)((realAverage+1.0)*50));
                     String topTopics = "";
                     for(int i =0; i<5& i<topic.length();i++){
                         topTopics = topTopics+topic.getString(i)+"\n";
