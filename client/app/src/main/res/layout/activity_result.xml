@@ -11,34 +11,9 @@
     tools:context=".result">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/name"
-        android:layout_width="390dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp"
-        app:cardBackgroundColor="#FAF7F7"
-        app:cardElevation="8dp"
-        card_view:cardCornerRadius="4dp">
-
-        <TextView
-            android:id="@+id/subName"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:textColor="#FF7043"
-            android:textSize="18sp"
-            android:typeface="serif">
-
-        </TextView>
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.cardview.widget.CardView
         android:id="@+id/realCard"
         android:layout_width="390dp"
-        android:layout_height="250dp"
+        android:layout_height="300dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
@@ -52,7 +27,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginLeft="330dp"
-            android:layout_marginTop="165dp"
+            android:layout_marginTop="225dp"
             card_view:srcCompat="@drawable/happy" />
 
         <ImageView
@@ -60,9 +35,8 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="165dp"
+            android:layout_marginTop="225dp"
             card_view:srcCompat="@drawable/sad" />
-
 
         <ProgressBar
             android:id="@+id/realBar"
@@ -70,22 +44,34 @@
             android:layout_width="229dp"
             android:layout_height="15dp"
             android:layout_marginLeft="80dp"
-            android:layout_marginTop="180dp"
+            android:layout_marginTop="240dp"
             android:progressDrawable="@drawable/progressbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/subName"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#FF7043"
+            android:textSize="22sp"
+            android:typeface="serif">
+
+        </TextView>
 
         <TextView
             android:id="@+id/real"
             android:layout_width="200dp"
             android:layout_height="30dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="30dp"
             android:gravity="center"
             android:text="Real-Time Score:"
             android:textColor="#FF7043"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:typeface="serif"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -97,7 +83,7 @@
             android:layout_width="94dp"
             android:layout_height="30dp"
             android:layout_marginLeft="150dp"
-            android:layout_marginTop="210dp"
+            android:layout_marginTop="260dp"
             android:gravity="center"
             android:text="Loading..."
             android:textColor="#212121"
@@ -108,6 +94,13 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/realBar" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
+            android:layout_width="350dp"
+            android:layout_height="180dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="55dp" />
     </androidx.cardview.widget.CardView>
 
 
@@ -162,7 +155,7 @@
             android:gravity="center"
             android:text="Historical Score:"
             android:textColor="#FF7043"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:typeface="serif"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -190,7 +183,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/topicCard"
         android:layout_width="390dp"
-        android:layout_height="220dp"
+        android:layout_height="200dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
@@ -209,7 +202,7 @@
             android:gravity="center"
             android:text="Top 5 Topics:"
             android:textColor="#FF7043"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:typeface="serif"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

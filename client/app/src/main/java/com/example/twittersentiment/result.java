@@ -3,11 +3,20 @@ package com.example.twittersentiment;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +29,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class result extends AppCompatActivity {
 
@@ -30,6 +40,7 @@ public class result extends AppCompatActivity {
     private Double hisAverage, realAverage;
     private TextView hisText,realText,topicText;
     private ProgressBar hisBar, realBar;
+    private PieChart piechart;
 
 
 
@@ -41,6 +52,8 @@ public class result extends AppCompatActivity {
         Intent getIntent = getIntent();
         minute = getIntent.getIntExtra("minute",600);
         suburb = getIntent.getStringExtra("suburb");
+        piechart = findViewById(R.id.pieChart);
+        piechart.setNoDataText("");
         TextView suburbName = findViewById(R.id.subName);
         suburbName.setText(suburb.split("'")[1]);
         sendHttpRequest();
@@ -49,6 +62,7 @@ public class result extends AppCompatActivity {
         realText = findViewById(R.id.realAverage);
         realBar = findViewById(R.id.realBar);
         topicText = findViewById(R.id.topic);
+
 
 
     }
@@ -64,6 +78,7 @@ public class result extends AppCompatActivity {
                     JSONObject his_result =  getHttpConnection(historyURL);
                     JSONObject real_result  = getHttpConnection(realURL);
                     JSONObject topic_result = getHttpConnection(topicURL);
+                    int[] count = new int[3];
                     if(!his_result.isNull(suburb)) {
                         JSONObject history = (JSONObject) his_result.get(suburb);
                         hisAverage = Double.parseDouble(history.getString("avg"));
@@ -74,6 +89,9 @@ public class result extends AppCompatActivity {
                     if(!real_result.isNull(suburb)){
                         JSONObject realTime = (JSONObject) real_result.get(suburb);
                         realAverage = Double.parseDouble(realTime.getString("avg"));
+                        count[0] = Integer.getInteger(realTime.getString("positive"));
+                        count[1] = Integer.getInteger(realTime.getString("negative"));
+                        count[2] = Integer.getInteger(realTime.getString("neutral"));
                     }
                     else{
                         realAverage = 0.0;
@@ -84,7 +102,7 @@ public class result extends AppCompatActivity {
                     Log.d(TAG, "run: get the http result"+ hisAverage.toString());
                     Log.d(TAG, "run: "+ realAverage.toString());
                     Log.d(TAG, "run2: "+ topTopics.toString());
-                    showResponse(hisAverage,realAverage,(JSONArray)topTopics.get(1));
+                    showResponse(hisAverage,realAverage,count,(JSONArray)topTopics.get(1));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -154,7 +172,7 @@ public class result extends AppCompatActivity {
         return null;
     }
 
-    private void showResponse(final Double hisAverage, final Double realAverage, final JSONArray topic) {
+    private void showResponse(final Double hisAverage, final Double realAverage,final int[] count, final JSONArray topic) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -168,7 +186,45 @@ public class result extends AppCompatActivity {
                         topTopics = topTopics+topic.getString(i)+"\n";
                     }
                     topicText.setText(topTopics);
-
+                    if(count[0]+count[1]+count[2]==0){
+                        piechart.setNoDataText("No Tweets");
+                    }
+                    else {
+                        piechart.setHoleRadius(50f);
+                        piechart.setTransparentCircleRadius(30f);
+                        piechart.setHoleColor(Color.TRANSPARENT);
+                        piechart.setDrawEntryLabels(false);
+                        Description label = new Description();
+                        label.setText("Number of Tweets");
+                        label.setTextSize(15);
+                        piechart.setDescription(label);
+                        piechart.setExtraOffsets(5, 5, 5, 5);
+                        ArrayList<PieEntry> yValues = new ArrayList<>();
+                        yValues.add(new PieEntry(count[0], "Positive Tweets"));
+                        yValues.add(new PieEntry(count[1], "Negative Tweets"));
+                        yValues.add(new PieEntry(count[2], "Neutral Tweets"));
+                        PieDataSet pieDataSet = new PieDataSet(yValues, "");
+                        ArrayList<Integer> colors = new ArrayList<Integer>();
+                        colors.add(Color.parseColor("#80FF5722"));
+                        colors.add(Color.parseColor("#8003A9F4"));
+                        colors.add(Color.parseColor("#80FFEB3B"));
+                        pieDataSet.setColors(colors);
+                        pieDataSet.setValueTextColor(Color.BLACK);
+                        pieDataSet.setValueTextSize(10);
+                        pieDataSet.setSliceSpace(1f);
+                        pieDataSet.setSliceSpace(0);
+                        PieData pieData = new PieData(pieDataSet);
+                        piechart.setData(pieData);
+                        Legend legend = piechart.getLegend();
+                        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+                        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+                        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+                        legend.setTextSize(10);
+                        legend.setTextColor(Color.BLACK);
+                        legend.setXEntrySpace(7f);
+                        legend.setYEntrySpace(5f);
+                        piechart.animateXY(1000, 1000);
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();

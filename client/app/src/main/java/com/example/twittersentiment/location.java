@@ -366,9 +366,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                     layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
                         @Override
                         public void onFeatureClick(Feature feature) {
-                            Toast.makeText(location.this,
-                                    "Feature clicked: " + feature.getProperty("SA2_NAME16"),
-                                    Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(location.this,result.class);
                             intent.putExtra("suburb","('"+feature.getProperty("SA2_NAME16")+"', '"+feature.getProperty("SA2_5DIG16")+"')" );
                             intent.putExtra("minute",time);
