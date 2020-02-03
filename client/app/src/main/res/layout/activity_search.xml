@@ -41,15 +41,16 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
-        android:thumb="@drawable/thumb"
+        android:layout_marginBottom="60dp"
         android:max="6"
         android:progress="3"
+        android:thumb="@drawable/thumb"
+        app:layout_constraintVertical_bias="0.39"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintHorizontal_bias="0.502"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toTopOf="@+id/guideline2"
-        map:layout_constraintVertical_bias="0.457" />
+        map:layout_constraintTop_toTopOf="@+id/guideline2" />
 
     <TextView
         android:id="@+id/showTime"
@@ -68,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        map:layout_constraintGuide_percent="0.7" />
+        map:layout_constraintGuide_percent="0.8" />
 
     <fragment
         android:id="@+id/map"

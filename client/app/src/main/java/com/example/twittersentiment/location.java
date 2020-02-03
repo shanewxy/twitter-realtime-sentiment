@@ -60,7 +60,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     private static final int LOCATION_CODE = 1;
     private Location mLastLocation;
     private String TAG = "location";
-    private Button search;
+    private Button locationSearch;
     private AutoCompleteTextView sa2Name;
     private int time;
 
@@ -72,7 +72,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
-        search = findViewById(R.id.button);
+        locationSearch = findViewById(R.id.search);
         sa2Name = findViewById(R.id.locationName);
         Intent getIntent = getIntent();
         time = getIntent.getIntExtra("minute",1440);
@@ -88,24 +88,26 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
 
 
         // listen the search button
-        search.setOnClickListener(new View.OnClickListener() {
+        locationSearch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 Log.d(TAG, "onClick: search button clicked");
-
-                Intent intent = new Intent(location.this,result.class);
-                if (!sa2Name.getText().toString().equals("")){
-                    String enteredName = sa2Name.getText().toString();
-                    String enteredSuburbName = getQueryName(enteredName);
-                    intent.putExtra("suburb",enteredSuburbName);
+                try {
+                    Intent intent = new Intent(location.this, result.class);
+                    if (!sa2Name.getText().toString().equals("")) {
+                        String enteredName = sa2Name.getText().toString();
+                        String enteredSuburbName = getQueryName(enteredName);
+                        intent.putExtra("suburb", enteredSuburbName);
+                    } else {
+                        intent.putExtra("suburb", suburbName);
+                    }
+                    intent.putExtra("minute", time);
+                    startActivity(intent);
+                }catch (Exception e){
+                    Log.d(TAG, "onClick: "+e.getMessage());
                 }
-                else{
-                    intent.putExtra("suburb", suburbName);
-                }
-                intent.putExtra("minute",time);
-                startActivity(intent);
-
             }
         });
+
 
 
         //  get the location permission
