@@ -346,18 +346,19 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                                 style.setStrokeWidth(2);
                                 style.setClickable(true);
                                 float average = Float.parseFloat(realTime.getString("avg"));
-                                float[] color = new float[]{6,0.9f,0.9f};
-                                if (average > 0) {
-                                    color[1] = color[1]- average*0.1f;
-                                    color[2] = color[2]- average*0.3f;
+                                int[] color = new int[]{251,211,211};
+                                if (average > 0.0) {
+                                    color[1] = color[1]- (int)(average*160);
+                                    color[2] = color[2]- (int)(average*160);
                                 }else if(average ==0){
-                                    color[0] = 48;
+                                    color[1] = 252;
+                                    color[0] = 254;
                                 }else {
-                                    color[0] = 204f;
-                                    color[1] = color[1]+ average*0.1f;
-                                    color[2] = color[2]+ average*0.3f;
+                                    color[2] = 250;
+                                    color[1] = color[1]+ (int)(average*160);
+                                    color[0] = color[0]+ (int)(average*160)-60;
                                 }
-                                style.setFillColor(Color.HSVToColor(color));
+                                style.setFillColor(Color.rgb(color[0],color[1],color[2]));
                                 feature.setPolygonStyle(style);
                             }
                         }

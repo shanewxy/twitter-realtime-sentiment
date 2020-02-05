@@ -67,11 +67,24 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".location"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="402dp" />
+        app:layout_constraintVertical_bias="1.0"
+        tools:context=".location" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="100dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.97"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/map"
+        app:layout_constraintVertical_bias="0.98"
+        map:srcCompat="@drawable/legend" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
