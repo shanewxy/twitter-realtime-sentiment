@@ -9,6 +9,7 @@ import argparse
 import twitter_credentials
 import shapefile
 from shapely.geometry import Point, Polygon
+from http.client import IncompleteRead
 
 # coordinates of Melbourne
 locations = [144.946457, -37.840935, 145.9631, -36.8136]
@@ -24,12 +25,15 @@ class TwitterStreamer:
     """
 
     def stream_tweets(self, locations):
-        listener = MyStreamListener()
-        auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
-        auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
+        try:
+            listener = MyStreamListener()
+            auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
+            auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
 
-        stream = Stream(auth, listener)
-        stream.filter(locations=locations)
+            stream = Stream(auth, listener)
+            stream.filter(locations=locations)
+        except IncompleteRead:
+            pass
 
 
 class MyStreamListener(StreamListener):
