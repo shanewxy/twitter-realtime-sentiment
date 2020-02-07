@@ -39,6 +39,7 @@ import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,6 +64,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     private Button locationSearch;
     private AutoCompleteTextView sa2Name;
     private int time;
+    private boolean flag;
 
 
     @Override
@@ -82,31 +84,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         String[] name = resources.getStringArray(R.array.sa2NameArray);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,name);
         sa2Name.setAdapter(adapter);
-
-        // obtain the input of the SA2 name
-//        sa2Name.getOnItemSelectedListener()
-
-
-        // listen the search button
-        locationSearch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){
-                Log.d(TAG, "onClick: search button clicked");
-                try {
-                    Intent intent = new Intent(location.this, result.class);
-                    if (!sa2Name.getText().toString().equals("")) {
-                        String enteredName = sa2Name.getText().toString();
-                        String enteredSuburbName = getQueryName(enteredName);
-                        intent.putExtra("suburb", enteredSuburbName);
-                    } else {
-                        intent.putExtra("suburb", suburbName);
-                    }
-                    intent.putExtra("minute", time);
-                    startActivity(intent);
-                }catch (Exception e){
-                    Log.d(TAG, "onClick: "+e.getMessage());
-                }
-            }
-        });
 
 
 
@@ -181,6 +158,55 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         }catch(Exception e){
                 Log.d(TAG, "onCreate: " + e);
         }
+    }
+
+
+    private void enterResponse(final JSONObject real_result) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    locationSearch.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v){
+                            Log.d(TAG, "onClick: search button clicked");
+                            try {
+                                String enteredSuburbName;
+                                Intent intent = new Intent(location.this, result.class);
+                                if (!sa2Name.getText().toString().equals("")) {
+                                    String enteredName = sa2Name.getText().toString();
+                                    enteredSuburbName = getQueryName(enteredName);
+                                } else {
+                                    enteredSuburbName = suburbName;
+                                }
+                                intent.putExtra("suburb", enteredSuburbName);
+                                if (!real_result.isNull(enteredSuburbName)) {
+                                    JSONObject realTime = (JSONObject) real_result.get(enteredSuburbName);
+                                    intent.putExtra("average", Double.parseDouble(realTime.getString("avg")));
+                                    String pos = realTime.getString("positive");
+                                    Log.d(TAG, "onFeatureClick: "+pos);
+                                    int[] count = new int[]{Integer.parseInt(realTime.getString("positive")),
+                                            Integer.parseInt(realTime.getString("negative")),
+                                            Integer.parseInt(realTime.getString("neutral"))};
+                                    intent.putExtra("count", count);
+                                }else {
+                                    int[] count = new int[]{0,0,0};
+                                    intent.putExtra("average",0.0);
+                                    intent.putExtra("count", count);
+                                }
+                                intent.putExtra("minute", time);
+                                startActivity(intent);
+                            }catch (Exception e){
+                                Log.d(TAG, "onClick: "+e.getMessage());
+                            }
+                        }
+                    });
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 
@@ -312,7 +338,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                 try {
                     URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time);
                     getHttpConnection(realURL);
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d(TAG, "run: " + e.getMessage());
@@ -338,13 +363,13 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                     if(real_result!=null) {
                         for (GeoJsonFeature feature : layer.getFeatures()) {
                             String name = "('" + feature.getProperty("SA2_NAME16") + "', '" + feature.getProperty("SA2_5DIG16") + "')";
+                            GeoJsonPolygonStyle style = new GeoJsonPolygonStyle();
+                            style.setStrokeColor(Color.BLUE);
+                            style.setStrokeWidth(2);
+                            style.setClickable(true);
                             if (!real_result.isNull(name)) {
                                 Log.d(TAG, "onClick: " + name);
                                 JSONObject realTime = (JSONObject) real_result.get(name);
-                                GeoJsonPolygonStyle style = new GeoJsonPolygonStyle();
-                                style.setStrokeColor(Color.BLUE);
-                                style.setStrokeWidth(2);
-                                style.setClickable(true);
                                 float average = Float.parseFloat(realTime.getString("avg"));
                                 int[] color = new int[]{251,211,211};
                                 if (average > 0.0) {
@@ -360,6 +385,9 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                                 }
                                 style.setFillColor(Color.rgb(color[0],color[1],color[2]));
                                 feature.setPolygonStyle(style);
+                            }else{
+                                style.setFillColor(Color.WHITE);
+                                feature.setPolygonStyle(style);
                             }
                         }
                     }
@@ -367,10 +395,29 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                     layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
                         @Override
                         public void onFeatureClick(Feature feature) {
-                            Intent intent = new Intent(location.this,result.class);
-                            intent.putExtra("suburb","('"+feature.getProperty("SA2_NAME16")+"', '"+feature.getProperty("SA2_5DIG16")+"')" );
-                            intent.putExtra("minute",time);
-                            startActivity(intent);
+                            try {
+                                Intent intent = new Intent(location.this,result.class);
+                                String name = "('" + feature.getProperty("SA2_NAME16") + "', '" + feature.getProperty("SA2_5DIG16") + "')";
+                                intent.putExtra("suburb",name);
+                                if (!real_result.isNull(name)) {
+                                    JSONObject realTime = (JSONObject) real_result.get(name);
+                                    intent.putExtra("average", Double.parseDouble(realTime.getString("avg")));
+                                    String pos = realTime.getString("positive");
+                                    Log.d(TAG, "onFeatureClick: "+pos);
+                                    int[] count = new int[]{Integer.parseInt(realTime.getString("positive")),
+                                            Integer.parseInt(realTime.getString("negative")),
+                                            Integer.parseInt(realTime.getString("neutral"))};
+                                    intent.putExtra("count", count);
+                                }else {
+                                    int[] count = new int[]{0,0,0};
+                                    intent.putExtra("average",0.0);
+                                    intent.putExtra("count", count);
+                                }
+                                intent.putExtra("minute",time);
+                                startActivity(intent);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
 
@@ -434,8 +481,8 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                 InputStream input = connection.getInputStream();
                 JSONObject result =  getJsonObject(input);
                 showMapResult(result);
+                enterResponse(result);
                 connection.disconnect();
-
             }
             else{
                 networkError();

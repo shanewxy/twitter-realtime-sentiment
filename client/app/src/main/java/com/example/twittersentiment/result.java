@@ -37,7 +37,7 @@ public class result extends AppCompatActivity {
     private String TAG = "result";
     private  Integer minute;
     private String suburb;
-    private Double hisAverage, realAverage;
+    private Double hisAverage;
     private TextView hisText,realText,topicText;
     private ProgressBar hisBar, realBar;
     private PieChart piechart;
@@ -52,33 +52,37 @@ public class result extends AppCompatActivity {
         Intent getIntent = getIntent();
         minute = getIntent.getIntExtra("minute",600);
         suburb = getIntent.getStringExtra("suburb");
-        piechart = findViewById(R.id.pieChart);
-        piechart.setNoDataText("");
-        TextView suburbName = findViewById(R.id.subName);
-        suburbName.setText(suburb.split("'")[1]);
-        sendHttpRequest();
+        Double realAverage = getIntent.getDoubleExtra("average",0.0);
+        int[] count = getIntent.getIntArrayExtra("count");
         hisText = findViewById(R.id.hisAverge);
         hisBar = findViewById(R.id.hisBar);
         realText = findViewById(R.id.realAverage);
         realBar = findViewById(R.id.realBar);
         topicText = findViewById(R.id.topic);
+        piechart = findViewById(R.id.pieChart);
+        piechart.setNoDataText("");
+        TextView suburbName = findViewById(R.id.subName);
+        suburbName.setText(suburb.split("'")[1]);
+        realtimeResult(realAverage,count);
+        sendHisRequest();
+        sendTopicRequest();
+
 
 
 
     }
 
-    public  void sendHttpRequest(){
+    public  void sendHisRequest(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     URL historyURL = new URL("http://1926b0aa.jp.ngrok.io/stats/historic");
-                    URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute="+minute);
-                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics?minute="+minute);
+//                    URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute="+minute);
+
                     JSONObject his_result =  getHttpConnection(historyURL);
-                    JSONObject real_result  = getHttpConnection(realURL);
-                    JSONObject topic_result = getHttpConnection(topicURL);
-                    int[] count = new int[3];
+//                    JSONObject real_result  = getHttpConnection(realURL);;
+//                    int[] count = new int[3];
                     if(!his_result.isNull(suburb)) {
                         JSONObject history = (JSONObject) his_result.get(suburb);
                         hisAverage = Double.parseDouble(history.getString("avg"));
@@ -86,23 +90,17 @@ public class result extends AppCompatActivity {
                     else{
                         hisAverage = 0.0;
                     }
-                    if(!real_result.isNull(suburb)){
-                        JSONObject realTime = (JSONObject) real_result.get(suburb);
-                        realAverage = Double.parseDouble(realTime.getString("avg"));
-                        count[0] = Integer.getInteger(realTime.getString("positive"));
-                        count[1] = Integer.getInteger(realTime.getString("negative"));
-                        count[2] = Integer.getInteger(realTime.getString("neutral"));
-                    }
-                    else{
-                        realAverage = 0.0;
-                    }
-                    JSONArray topic = (JSONArray)topic_result.get("top_topics");
-                    JSONArray topTopics = (JSONArray) topic.get(0);
-                    Log.d(TAG, "run: "+suburb);
-                    Log.d(TAG, "run: get the http result"+ hisAverage.toString());
-                    Log.d(TAG, "run: "+ realAverage.toString());
-                    Log.d(TAG, "run2: "+ topTopics.toString());
-                    showResponse(hisAverage,realAverage,count,(JSONArray)topTopics.get(1));
+//                    if(!real_result.isNull(suburb)){
+//                        JSONObject realTime = (JSONObject) real_result.get(suburb);
+//                        realAverage = Double.parseDouble(realTime.getString("avg"));
+//                        count[0] = Integer.getInteger(realTime.getString("positive"));
+//                        count[1] = Integer.getInteger(realTime.getString("negative"));
+//                        count[2] = Integer.getInteger(realTime.getString("neutral"));
+//                    }
+//                    else{
+//                        realAverage = 0.0;
+//                    }
+                    showResponse(hisAverage);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -111,6 +109,28 @@ public class result extends AppCompatActivity {
             }
         }).start();
     }
+
+
+    public  void sendTopicRequest(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics?minute="+minute);
+                    JSONObject topic_result = getHttpConnection(topicURL);
+                    JSONArray topic = (JSONArray)topic_result.get("top_topics");
+                    JSONArray topTopics = (JSONArray) topic.get(0);
+                    showTopicResponse((JSONArray)topTopics.get(1));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "run: "+e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+
 
     private JSONObject getHttpConnection(URL url){
         try {
@@ -172,59 +192,30 @@ public class result extends AppCompatActivity {
         return null;
     }
 
-    private void showResponse(final Double hisAverage, final Double realAverage,final int[] count, final JSONArray topic) {
+    private void showResponse(final Double hisAverage) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     hisText.setText(String.format("%.4f", hisAverage));
                     hisBar.setProgress((int)((hisAverage+1.0)*50));
-                    realText.setText(String.format("%.4f",realAverage));
-                    realBar.setProgress((int)((realAverage+1.0)*50));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void showTopicResponse(final JSONArray topic) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
                     String topTopics = "";
                     for(int i =0; i<5& i<topic.length();i++){
                         topTopics = topTopics+topic.getString(i)+"\n";
                     }
                     topicText.setText(topTopics);
-                    if(count[0]+count[1]+count[2]==0){
-                        piechart.setNoDataText("No Tweets");
-                    }
-                    else {
-                        piechart.setHoleRadius(50f);
-                        piechart.setTransparentCircleRadius(30f);
-                        piechart.setHoleColor(Color.TRANSPARENT);
-                        piechart.setDrawEntryLabels(false);
-                        Description label = new Description();
-                        label.setText("Number of Tweets");
-                        label.setTextSize(15);
-                        piechart.setDescription(label);
-                        piechart.setExtraOffsets(5, 5, 5, 5);
-                        ArrayList<PieEntry> yValues = new ArrayList<>();
-                        yValues.add(new PieEntry(count[0], "Positive Tweets"));
-                        yValues.add(new PieEntry(count[1], "Negative Tweets"));
-                        yValues.add(new PieEntry(count[2], "Neutral Tweets"));
-                        PieDataSet pieDataSet = new PieDataSet(yValues, "");
-                        ArrayList<Integer> colors = new ArrayList<Integer>();
-                        colors.add(Color.parseColor("#80FF5722"));
-                        colors.add(Color.parseColor("#8003A9F4"));
-                        colors.add(Color.parseColor("#80FFEB3B"));
-                        pieDataSet.setColors(colors);
-                        pieDataSet.setValueTextColor(Color.BLACK);
-                        pieDataSet.setValueTextSize(10);
-                        pieDataSet.setSliceSpace(1f);
-                        pieDataSet.setSliceSpace(0);
-                        PieData pieData = new PieData(pieDataSet);
-                        piechart.setData(pieData);
-                        Legend legend = piechart.getLegend();
-                        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-                        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-                        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
-                        legend.setTextSize(10);
-                        legend.setTextColor(Color.BLACK);
-                        legend.setXEntrySpace(7f);
-                        legend.setYEntrySpace(5f);
-                        piechart.animateXY(1000, 1000);
-                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -232,4 +223,57 @@ public class result extends AppCompatActivity {
             }
         });
     }
+
+
+    private void realtimeResult(final Double realAverage,final int[] count) {
+        try {
+            realText.setText(String.format("%.4f",realAverage));
+            realBar.setProgress((int)((realAverage+1.0)*50));
+            if(count[0]+count[1]+count[2]==0){
+                piechart.setNoDataText("No Tweets");
+            }
+            else {
+                piechart.setHoleRadius(50f);
+                piechart.setTransparentCircleRadius(30f);
+                piechart.setHoleColor(Color.TRANSPARENT);
+                piechart.setDrawEntryLabels(false);
+                Description label = new Description();
+                label.setText("Number of Tweets");
+                label.setTextSize(15);
+                piechart.setDescription(label);
+                piechart.setExtraOffsets(5, 5, 5, 5);
+                ArrayList<PieEntry> yValues = new ArrayList<>();
+                yValues.add(new PieEntry(count[0], "Positive Tweets"));
+                yValues.add(new PieEntry(count[1], "Negative Tweets"));
+                yValues.add(new PieEntry(count[2], "Neutral Tweets"));
+                PieDataSet pieDataSet = new PieDataSet(yValues, "");
+                ArrayList<Integer> colors = new ArrayList<Integer>();
+                colors.add(Color.parseColor("#80FF5722"));
+                colors.add(Color.parseColor("#8003A9F4"));
+                colors.add(Color.parseColor("#80FFEB3B"));
+                pieDataSet.setColors(colors);
+                pieDataSet.setValueTextColor(Color.BLACK);
+                pieDataSet.setValueTextSize(10);
+                pieDataSet.setSliceSpace(1f);
+                pieDataSet.setSliceSpace(0);
+                PieData pieData = new PieData(pieDataSet);
+                piechart.setData(pieData);
+                Legend legend = piechart.getLegend();
+                legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+                legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+                legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+                legend.setTextSize(10);
+                legend.setTextColor(Color.BLACK);
+                legend.setXEntrySpace(7f);
+                legend.setYEntrySpace(5f);
+                piechart.animateXY(1000, 1000);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }
