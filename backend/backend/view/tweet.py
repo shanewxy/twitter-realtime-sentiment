@@ -208,11 +208,51 @@ def top_topics(request):
 
     text = ""
     for tweet in tweets:
-        text += tweet.value
+        text += tweet.value[0]
 
     words = common_topics(text, limit)
 
     resp['top_topics'] = words
+    return HttpResponse(ujson.dumps(resp))
+
+
+@require_http_methods(['GET'])
+def top_topics_with_location(request):
+    """
+    An api used to query the top hot topics, response group by location
+    :param request: contains end time and top limit
+    :return: {start_time, end_time, topics}
+    """
+    minute = request.GET.get('minute', default=5)
+    limit = request.GET.get('limit', default=10)
+
+    resp = dict()
+    now = datetime.datetime.now()
+    now_timestamp = datetime.datetime.timestamp(now)
+
+    start_time = now - datetime.timedelta(minutes=int(minute))
+    start_timestamp = datetime.datetime.timestamp(start_time)
+    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+
+    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
+    end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
+
+    resp['start_time'] = start_time
+    resp['end_time'] = end_time
+
+    texts = dict()
+    for tweet in tweets:
+        name = tweet.value[1]
+        code = tweet.value[2]
+        place = (name, code)
+        if texts.get(place) is None:
+            texts[place] = ""
+        texts[place] += tweet.value[0]
+
+    for place, text in texts.items():
+        words = common_topics(text, limit)
+        resp[place] = words
+
     return HttpResponse(ujson.dumps(resp))
 
 

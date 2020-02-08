@@ -23,6 +23,7 @@ urlpatterns = [
     path('stats/historic', historic_zones),
     path('stats/realtime/words', top_words),
     path('stats/realtime/topics', top_topics),
+    path('stats/realtime/topics/location', top_topics_with_location),
     path('stats/realtime', realtime_zones),
     path('stats/historic/minmax', stats_min_max)
 ]
