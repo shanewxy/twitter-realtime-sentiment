@@ -256,6 +256,46 @@ def top_topics_with_location(request):
     return HttpResponse(ujson.dumps(resp))
 
 
+@require_http_methods(['GET'])
+def top_topics_by_code(request):
+    """
+    An api used to query the top hot topics, response group by location
+    :param request: contains end time and top limit
+    :return: {start_time, end_time, topics}
+    """
+    minute = request.GET.get('minute', default=5)
+    limit = request.GET.get('limit', default=10)
+    code = request.GET.get('code')
+
+    if code is None:
+        return top_topics_with_location(request)
+
+    resp = dict()
+    now = datetime.datetime.now()
+    now_timestamp = datetime.datetime.timestamp(now)
+
+    start_time = now - datetime.timedelta(minutes=int(minute))
+    start_timestamp = datetime.datetime.timestamp(start_time)
+    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+
+    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
+    end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
+
+    resp['start_time'] = start_time
+    resp['end_time'] = end_time
+
+    texts = ""
+    for tweet in tweets:
+        tweet_code = tweet.value[2]
+        if code == tweet_code:
+            texts += tweet.value[0]
+
+    words = common_topics(texts, limit)
+    resp[code] = words
+
+    return HttpResponse(ujson.dumps(resp))
+
+
 if __name__ == '__main__':
     melb_json = ujson.load(open(os.path.join(os.path.dirname(BASE_DIR), 'SA2boundary.json')))
     # print(os.path.join(os.path.dirname(BASE_DIR),'SA2boundary.json'))
