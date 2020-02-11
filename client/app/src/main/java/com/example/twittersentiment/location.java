@@ -16,6 +16,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -37,6 +39,7 @@ import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
+import com.wang.avi.AVLoadingIndicatorView;
 
 
 import org.json.JSONArray;
@@ -57,14 +60,17 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
 
     private GoogleMap mMap;
     private LocationManager locationManager;
-    private String locationProvider,suburbName;
+    private String locationProvider, suburbName;
     private static final int LOCATION_CODE = 1;
     private Location mLastLocation;
     private String TAG = "location";
     private Button locationSearch;
     private AutoCompleteTextView sa2Name;
     private int time;
-    private boolean flag;
+    private AVLoadingIndicatorView loadingView;
+    private Boolean task1 = false, task2 = false;
+//    private Intent intent =new Intent();
+    private JSONObject historyResult,TopicResult;
 
 
     @Override
@@ -73,19 +79,25 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         setContentView(R.layout.activity_location);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
+                .findFragmentById(R.id.map);
         locationSearch = findViewById(R.id.search);
         sa2Name = findViewById(R.id.locationName);
+        loadingView = findViewById(R.id.loading);
+        loadingView.show();
         Intent getIntent = getIntent();
-        time = getIntent.getIntExtra("minute",1440);
+        time = getIntent.getIntExtra("minute", 1440);
+        sendRealTimeRequest();
+        sendHistoryRequest();
+        sendTopicRequest();
+//        sendRequest("http://1926b0aa.jp.ngrok.io/stats/historic",1);
+//        sendRequest("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?minute=" + time,2);
+//        intent =new Intent(location.this, result.class);
 
         // the autoCompeleteTextView
         Resources resources = getResources();
         String[] name = resources.getStringArray(R.array.sa2NameArray);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,name);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, name);
         sa2Name.setAdapter(adapter);
-
-
 
         //  get the location permission
         try {
@@ -135,11 +147,11 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                     @Override
                     public void onLocationChanged(Location location) {
                         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,12f));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12f));
                         Log.d(TAG, "onLocationChanged: new latlng");
                         try {
                             suburbName = getSuburb(location);
-                            Log.d(TAG, "onMapReady: "+suburbName);
+                            Log.d(TAG, "onMapReady: " + suburbName);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -148,17 +160,19 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                     }
                 };
 
-                locationManager.requestLocationUpdates(locationProvider,3000, 1,locationListener);
+                locationManager.requestLocationUpdates(locationProvider, 3000, 1, locationListener);
                 mapFragment.getMapAsync(this);
-                sendHttpRequest();
 
-
+//                sendRequest("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time, 1,handler);
+//                sendRequest("http://1926b0aa.jp.ngrok.io/stats/historic", 2,handler);
+//                sendRequest("http://1926b0aa.jp.ngrok.io/stats/realtime/topics?minute=" + time, 3,handler);
 
             }
-        }catch(Exception e){
-                Log.d(TAG, "onCreate: " + e);
+        } catch (Exception e) {
+            Log.d(TAG, "onCreate: " + e);
         }
     }
+
 
 
     private void enterResponse(final JSONObject real_result) {
@@ -167,11 +181,11 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             public void run() {
                 try {
                     locationSearch.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v){
+                        public void onClick(View v) {
                             Log.d(TAG, "onClick: search button clicked");
                             try {
+                                Intent intent =new Intent(location.this, result.class);
                                 String enteredSuburbName;
-                                Intent intent = new Intent(location.this, result.class);
                                 if (!sa2Name.getText().toString().equals("")) {
                                     String enteredName = sa2Name.getText().toString();
                                     enteredSuburbName = getQueryName(enteredName);
@@ -183,20 +197,40 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                                     JSONObject realTime = (JSONObject) real_result.get(enteredSuburbName);
                                     intent.putExtra("average", Double.parseDouble(realTime.getString("avg")));
                                     String pos = realTime.getString("positive");
-                                    Log.d(TAG, "onFeatureClick: "+pos);
+                                    Log.d(TAG, "onFeatureClick: " + pos);
                                     int[] count = new int[]{Integer.parseInt(realTime.getString("positive")),
                                             Integer.parseInt(realTime.getString("negative")),
                                             Integer.parseInt(realTime.getString("neutral"))};
                                     intent.putExtra("count", count);
-                                }else {
-                                    int[] count = new int[]{0,0,0};
-                                    intent.putExtra("average",0.0);
+                                } else {
+                                    int[] count = new int[]{0, 0, 0};
+                                    intent.putExtra("average", 0.0);
                                     intent.putExtra("count", count);
                                 }
                                 intent.putExtra("minute", time);
+                                double hisAverage;
+                                if (!historyResult.isNull(enteredSuburbName)) {
+                                    JSONObject history = (JSONObject) historyResult.get(enteredSuburbName);
+                                    hisAverage = Double.parseDouble(history.getString("avg"));
+                                } else {
+                                    hisAverage = 0.0;
+                                }
+                                intent.putExtra("history", hisAverage);
+                                if(!TopicResult.isNull(enteredSuburbName)){
+                                    JSONArray topic = (JSONArray) TopicResult.get(enteredSuburbName);
+                                    JSONArray topTopics = (JSONArray) topic.get(0);
+                                    JSONArray finalTopic = (JSONArray) topTopics.get(1);
+                                    String topTopic = "";
+                                    for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
+                                        topTopic = topTopic + finalTopic.getString(i) + "\n";
+                                    }
+                                    intent.putExtra("topic", topTopic);
+                                }else{
+                                    intent.putExtra("topic","No data");
+                                }
                                 startActivity(intent);
-                            }catch (Exception e){
-                                Log.d(TAG, "onClick: "+e.getMessage());
+                            } catch (Exception e) {
+                                Log.d(TAG, "onClick: " + e.getMessage());
                             }
                         }
                     });
@@ -208,7 +242,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             }
         });
     }
-
 
 
     /**
@@ -226,11 +259,10 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             mMap = googleMap;
             mMap.setMyLocationEnabled(true);
             Log.d(TAG, "onMapReady: Map ready");
-            if(mLastLocation != null) {
+            if (mLastLocation != null) {
                 LatLng latlng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12f));
                 suburbName = getSuburb(mLastLocation);
-
 
 
             }
@@ -243,7 +275,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     // convert the location to suburb name and SA2 code
     public String getSuburb(Location location) throws IOException {
         Geocoder addressCoder = new Geocoder(this);
-        List address = addressCoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+        List address = addressCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
         Address suburb = (Address) address.get(0);
         String name = suburb.getLocality();
         try {
@@ -253,19 +285,19 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             String line;
             while ((line = reader.readLine()) != null) {
                 String item[] = line.split(",");
-                if(name.equalsIgnoreCase(item[1])){
-                    String code =  "2"+item[5].substring(item[5].length()-4);
-                    return "('"+item[6]+"', '"+code+"')";
+                if (name.equalsIgnoreCase(item[1])) {
+                    String code = "2" + item[5].substring(item[5].length() - 4);
+                    return "('" + item[6] + "', '" + code + "')";
                 }
             }
         } catch (IOException e) {
-            Log.d(TAG, "getSuburb: "+e.getMessage());
+            Log.d(TAG, "getSuburb: " + e.getMessage());
         }
 
-        return  null;
+        return null;
     }
 
-    public String getQueryName(String enteredName){
+    public String getQueryName(String enteredName) {
         try {
             InputStreamReader is = new InputStreamReader(getResources().openRawResource(R.raw.code_sa2));
             BufferedReader reader = new BufferedReader(is);
@@ -273,22 +305,17 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             String line;
             while ((line = reader.readLine()) != null) {
                 String item[] = line.split(",");
-                if(enteredName.equalsIgnoreCase(item[1])){
-                    return "('"+item[1]+"', '"+item[0]+"')";
+                if (enteredName.equalsIgnoreCase(item[1])) {
+                    return "('" + item[1] + "', '" + item[0] + "')";
                 }
             }
         } catch (IOException e) {
-            Log.d(TAG, "getSuburb: "+e.getMessage());
+            Log.d(TAG, "getSuburb: " + e.getMessage());
         }
 
-        return  null;
+        return null;
 
     }
-
-
-
-
-
 
 
     @Override
@@ -331,13 +358,81 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         return false;
     }
 
-    public  void sendHttpRequest(){
+//    public void sendRequest(final String urlString, final int task, final Handler handler) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    URL url = new URL(urlString);
+//                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                    connection.setRequestMethod("GET");
+//                    connection.connect();
+//                    int responseCode = connection.getResponseCode();
+//                    if (responseCode == HttpURLConnection.HTTP_OK) {
+//                        InputStream input = connection.getInputStream();
+//                        String result;
+//                        if (task == 1) {
+//                            result = getWebString(input);
+////                            realTimeResult = getJsonObject(input);
+//                            task1 = true;
+//                            Log.d(TAG, "run: task1");
+//                        } else if (task == 2) {
+//                            result = getWebString(input);
+////                            historyResult =getJsonObject(input);
+//                            task2 = true;
+//                            Log.d(TAG, "run: task2");
+//                        } else {
+//                            result = getWebString(input);
+////                            topicResult = getJsonObject(input);
+//                            task3 = true;
+//                            Log.d(TAG, "run: task3");
+//                        }
+//                        Log.d(TAG, "run: "+result);
+//                        Message msg = new Message();
+//                        msg.obj = result;
+//                        msg.what = task;
+//                        handler.sendMessage(msg);
+//                        connection.disconnect();
+//                    } else {
+//                        networkError();
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    Log.d(TAG, "getHttpConnection: " + e.getMessage());
+//                }
+//
+//            }
+//        });
+//    }
+
+
+    public void sendRealTimeRequest() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URL realURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time);
-                    getHttpConnection(realURL);
+                    URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.connect();
+                    int responseCode = connection.getResponseCode();
+                    if(responseCode == HttpURLConnection.HTTP_OK  ){
+                        InputStream input = connection.getInputStream();
+                        JSONObject result =  getJsonObject(input);
+                        Log.d(TAG, "run: got realtime data");
+                        while(true){
+                            Thread.sleep(1000);
+                            if(task1&&task2) {
+                                showMapResult(result);
+                                enterResponse(result);
+                                break;
+                            }
+                        }
+                        connection.disconnect();
+                    }
+                    else{
+                        networkError();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d(TAG, "run: " + e.getMessage());
@@ -350,98 +445,203 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         }).start();
     }
 
-    private void showMapResult(final JSONObject real_result){
-        runOnUiThread(new  Runnable(){
-            public void run(){
-                try {
-                    GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.victoria,getApplicationContext());
-                    GeoJsonPolygonStyle polygonStyle = layer.getDefaultPolygonStyle();
-                    polygonStyle.setClickable(true);
-                    polygonStyle.setStrokeColor(Color.BLUE);
-                    polygonStyle.setStrokeWidth(2);
-                    Log.d(TAG, "run: "+real_result);
-                    if(real_result!=null) {
-                        for (GeoJsonFeature feature : layer.getFeatures()) {
-                            String name = "('" + feature.getProperty("SA2_NAME16") + "', '" + feature.getProperty("SA2_5DIG16") + "')";
-                            GeoJsonPolygonStyle style = new GeoJsonPolygonStyle();
-                            style.setStrokeColor(Color.BLUE);
-                            style.setStrokeWidth(2);
-                            style.setClickable(true);
-                            if (!real_result.isNull(name)) {
-                                Log.d(TAG, "onClick: " + name);
-                                JSONObject realTime = (JSONObject) real_result.get(name);
-                                float average = Float.parseFloat(realTime.getString("avg"));
-                                int[] color = new int[]{251,211,211};
-                                if (average > 0.0) {
-                                    color[1] = color[1]- (int)(average*160);
-                                    color[2] = color[2]- (int)(average*160);
-                                }else if(average ==0){
-                                    color[1] = 252;
-                                    color[0] = 254;
-                                }else {
-                                    color[2] = 250;
-                                    color[1] = color[1]+ (int)(average*160);
-                                    color[0] = color[0]+ (int)(average*160)-60;
-                                }
-                                style.setFillColor(Color.rgb(color[0],color[1],color[2]));
-                                feature.setPolygonStyle(style);
-                            }else{
-                                style.setFillColor(Color.WHITE);
-                                feature.setPolygonStyle(style);
-                            }
-                        }
-                    }
-                    layer.addLayerToMap();
-                    layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
-                        @Override
-                        public void onFeatureClick(Feature feature) {
-                            try {
-                                Intent intent = new Intent(location.this,result.class);
-                                String name = "('" + feature.getProperty("SA2_NAME16") + "', '" + feature.getProperty("SA2_5DIG16") + "')";
-                                intent.putExtra("suburb",name);
-                                if (!real_result.isNull(name)) {
-                                    JSONObject realTime = (JSONObject) real_result.get(name);
-                                    intent.putExtra("average", Double.parseDouble(realTime.getString("avg")));
-                                    String pos = realTime.getString("positive");
-                                    Log.d(TAG, "onFeatureClick: "+pos);
-                                    int[] count = new int[]{Integer.parseInt(realTime.getString("positive")),
-                                            Integer.parseInt(realTime.getString("negative")),
-                                            Integer.parseInt(realTime.getString("neutral"))};
-                                    intent.putExtra("count", count);
-                                }else {
-                                    int[] count = new int[]{0,0,0};
-                                    intent.putExtra("average",0.0);
-                                    intent.putExtra("count", count);
-                                }
-                                intent.putExtra("minute",time);
-                                startActivity(intent);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
 
+    public void sendHistoryRequest() {
+    new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/historic");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+                int responseCode = connection.getResponseCode();
+                if(responseCode == HttpURLConnection.HTTP_OK  ){
+                    InputStream input = connection.getInputStream();
+                    historyResult = getJsonObject(input);
+                    task1 =true;
+                    Log.d(TAG, "run: get history result ");
+                    connection.disconnect();
+                }
+                else{
+                    networkError();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(TAG, "run: " + e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d(TAG, "run: " + e.getMessage());
+            }
+        }
+
+    }).start();
+}
+    public void sendTopicRequest() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?minute=" + time);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.connect();
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        InputStream input = connection.getInputStream();
+                        TopicResult = getJsonObject(input);
+                        task2 = true;
+                        Log.d(TAG, "run: get Topic result ");
+                        connection.disconnect();
+                    } else {
+                        networkError();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (JSONException e) {
+                    Log.d(TAG, "run: " + e.getMessage());
+                } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, "run: " + e.getMessage());
                 }
+            }
+
+        }).start();
+    }
+
+    private void showMapResult(final JSONObject real_result) {
+        runOnUiThread(new  Runnable(){
+            public void run(){
+        try {
+            GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.victoria, getApplicationContext());
+            GeoJsonPolygonStyle polygonStyle = layer.getDefaultPolygonStyle();
+            polygonStyle.setClickable(true);
+            polygonStyle.setStrokeColor(Color.BLUE);
+            polygonStyle.setStrokeWidth(2);
+            Log.d(TAG, "run: " + real_result);
+            if (real_result != null) {
+                for (GeoJsonFeature feature : layer.getFeatures()) {
+                    String name = "('" + feature.getProperty("SA2_NAME16") + "', '" + feature.getProperty("SA2_5DIG16") + "')";
+                    GeoJsonPolygonStyle style = new GeoJsonPolygonStyle();
+                    style.setStrokeColor(Color.BLUE);
+                    style.setStrokeWidth(2);
+                    style.setClickable(true);
+                    if (!real_result.isNull(name)) {
+                        Log.d(TAG, "onClick: " + name);
+                        JSONObject realTime = (JSONObject) real_result.get(name);
+                        float average = Float.parseFloat(realTime.getString("avg"));
+                        int[] color = new int[]{251, 211, 211};
+                        if (average > 0.0) {
+                            color[1] = color[1] - (int) (average * 160);
+                            color[2] = color[2] - (int) (average * 160);
+                        } else if (average == 0) {
+                            color[1] = 252;
+                            color[0] = 254;
+                        } else {
+                            color[2] = 250;
+                            color[1] = color[1] + (int) (average * 160);
+                            color[0] = color[0] + (int) (average * 160) - 60;
+                        }
+                        style.setFillColor(Color.rgb(color[0], color[1], color[2]));
+                        feature.setPolygonStyle(style);
+                    } else {
+                        style.setFillColor(Color.WHITE);
+                        feature.setPolygonStyle(style);
+                    }
+                }
+            }
+            layer.addLayerToMap();
+            loadingView.hide();
+            layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
+                @Override
+                public void onFeatureClick(Feature feature) {
+                    try {
+                        Intent intent =new Intent(location.this, result.class);
+                        String name = "('" + feature.getProperty("SA2_NAME16") + "', '" + feature.getProperty("SA2_5DIG16") + "')";
+                        intent.putExtra("suburb", name);
+                        if (!real_result.isNull(name)) {
+                            JSONObject realTime = (JSONObject) real_result.get(name);
+                            intent.putExtra("average", Double.parseDouble(realTime.getString("avg")));
+                            String pos = realTime.getString("positive");
+                            Log.d(TAG, "onFeatureClick: " + pos);
+                            int[] count = new int[]{Integer.parseInt(realTime.getString("positive")),
+                                    Integer.parseInt(realTime.getString("negative")),
+                                    Integer.parseInt(realTime.getString("neutral"))};
+                            intent.putExtra("count", count);
+                        } else {
+                            int[] count = new int[]{0, 0, 0};
+                            intent.putExtra("average", 0.0);
+                            intent.putExtra("count", count);
+                        }
+                        intent.putExtra("minute", time);
+                        double hisAverage;
+                        if (!historyResult.isNull(name)) {
+                            JSONObject history = (JSONObject) historyResult.get(name);
+                            hisAverage = Double.parseDouble(history.getString("avg"));
+                        } else {
+                            hisAverage = 0.0;
+                        }
+                        intent.putExtra("history", hisAverage);
+
+                        if(!TopicResult.isNull(name)){
+                            JSONArray topic = (JSONArray) TopicResult.get(name);
+                            JSONArray topTopics = (JSONArray) topic.get(0);
+                            JSONArray finalTopic = (JSONArray) topTopics.get(1);
+                            String topTopic = "";
+                            for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
+                                topTopic = topTopic + finalTopic.getString(i) + "\n";
+                            }
+                            intent.putExtra("topic", topTopic);
+                        }else{
+                            intent.putExtra("topic","No data");
+                        }
+
+
+                        startActivity(intent);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
             }
         });
     }
 
 
-
-    private void networkError(){
+    private void networkError() {
         runOnUiThread((new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(location.this,"Network Error",Toast.LENGTH_SHORT);
+                Toast.makeText(location.this, "Network Error", Toast.LENGTH_SHORT);
                 Log.d(TAG, "run: network error");
             }
         }));
     }
+
+    private String getWebString(InputStream input) {
+        try {
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+            StringBuilder responseStrBuilder = new StringBuilder();
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null)
+                responseStrBuilder.append(inputStr);
+
+            return responseStrBuilder.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
 
 
 
@@ -455,7 +655,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             String inputStr;
             while ((inputStr = streamReader.readLine()) != null)
                 responseStrBuilder.append(inputStr);
-
             JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
 
             //returns the json object
@@ -471,26 +670,26 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         return null;
     }
 
-    private void getHttpConnection(URL url){
-        try {
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            if(responseCode == HttpURLConnection.HTTP_OK  ){
-                InputStream input = connection.getInputStream();
-                JSONObject result =  getJsonObject(input);
-                showMapResult(result);
-                enterResponse(result);
-                connection.disconnect();
-            }
-            else{
-                networkError();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(TAG, "getHttpConnection: "+e.getMessage());
-        }
-
-    }
+//    private void getHttpConnection(URL url){
+//        try {
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("GET");
+//            connection.connect();
+//            int responseCode = connection.getResponseCode();
+//            if(responseCode == HttpURLConnection.HTTP_OK  ){
+//                InputStream input = connection.getInputStream();
+//                JSONObject result =  getJsonObject(input);
+//                showMapResult(result);
+//                enterResponse(result);
+//                connection.disconnect();
+//            }
+//            else{
+//                networkError();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Log.d(TAG, "getHttpConnection: "+e.getMessage());
+//        }
+//
+//    }
 }
