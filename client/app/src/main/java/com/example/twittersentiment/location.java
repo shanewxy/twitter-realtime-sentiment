@@ -87,8 +87,8 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         Intent getIntent = getIntent();
         time = getIntent.getIntExtra("minute", 1440);
         sendRealTimeRequest();
+//        sendTopicRequest();
         sendHistoryRequest();
-        sendTopicRequest();
 //        sendRequest("http://1926b0aa.jp.ngrok.io/stats/historic",1);
 //        sendRequest("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?minute=" + time,2);
 //        intent =new Intent(location.this, result.class);
@@ -216,18 +216,18 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                                     hisAverage = 0.0;
                                 }
                                 intent.putExtra("history", hisAverage);
-                                if(!TopicResult.isNull(enteredSuburbName)){
-                                    JSONArray topic = (JSONArray) TopicResult.get(enteredSuburbName);
-                                    JSONArray topTopics = (JSONArray) topic.get(0);
-                                    JSONArray finalTopic = (JSONArray) topTopics.get(1);
-                                    String topTopic = "";
-                                    for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
-                                        topTopic = topTopic + finalTopic.getString(i) + "\n";
-                                    }
-                                    intent.putExtra("topic", topTopic);
-                                }else{
-                                    intent.putExtra("topic","No data");
-                                }
+//                                if(!TopicResult.isNull(enteredSuburbName)){
+//                                    JSONArray topic = (JSONArray) TopicResult.get(enteredSuburbName);
+//                                    JSONArray topTopics = (JSONArray) topic.get(0);
+//                                    JSONArray finalTopic = (JSONArray) topTopics.get(1);
+//                                    String topTopic = "";
+//                                    for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
+//                                        topTopic = topTopic + finalTopic.getString(i) + "\n";
+//                                    }
+//                                    intent.putExtra("topic", topTopic);
+//                                }else{
+//                                    intent.putExtra("topic","No data");
+//                                }
                                 startActivity(intent);
                             } catch (Exception e) {
                                 Log.d(TAG, "onClick: " + e.getMessage());
@@ -421,12 +421,12 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                         JSONObject result =  getJsonObject(input);
                         Log.d(TAG, "run: got realtime data");
                         while(true){
-                            Thread.sleep(1000);
-                            if(task1&&task2) {
+                            if(task1) {
                                 showMapResult(result);
                                 enterResponse(result);
                                 break;
                             }
+                            Thread.sleep(200);
                         }
                         connection.disconnect();
                     }
@@ -582,18 +582,18 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                         }
                         intent.putExtra("history", hisAverage);
 
-                        if(!TopicResult.isNull(name)){
-                            JSONArray topic = (JSONArray) TopicResult.get(name);
-                            JSONArray topTopics = (JSONArray) topic.get(0);
-                            JSONArray finalTopic = (JSONArray) topTopics.get(1);
-                            String topTopic = "";
-                            for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
-                                topTopic = topTopic + finalTopic.getString(i) + "\n";
-                            }
-                            intent.putExtra("topic", topTopic);
-                        }else{
-                            intent.putExtra("topic","No data");
-                        }
+//                        if(!TopicResult.isNull(name)){
+//                            JSONArray topic = (JSONArray) TopicResult.get(name);
+//                            JSONArray topTopics = (JSONArray) topic.get(0);
+//                            JSONArray finalTopic = (JSONArray) topTopics.get(1);
+//                            String topTopic = "";
+//                            for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
+//                                topTopic = topTopic + finalTopic.getString(i) + "\n";
+//                            }
+//                            intent.putExtra("topic", topTopic);
+//                        }else{
+//                            intent.putExtra("topic","No data");
+//                        }
 
 
                         startActivity(intent);

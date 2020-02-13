@@ -63,7 +63,7 @@ public class result extends AppCompatActivity {
         topicText = findViewById(R.id.topic);
         piechart = findViewById(R.id.pieChart);
         piechart.setNoDataText("");
-        topicText.setText(topic);
+//        topicText.setText(topic);
         hisText.setText(String.format("%.4f", hisAverage));
         hisBar.setProgress((int)((hisAverage+1.0)*50));
 //        String history = getIntent.getStringExtra("history");
@@ -73,7 +73,7 @@ public class result extends AppCompatActivity {
         realtimeResult(realAverage,count);
 
 //        sendHisRequest();
-//        sendTopicRequest();
+        sendTopicRequest();
 
 
 
@@ -105,87 +105,104 @@ public class result extends AppCompatActivity {
 //    }
 //
 //
-//    public  void sendTopicRequest(){
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics?minute="+minute);
-//                    JSONObject topic_result = getHttpConnection(topicURL);
+    public  void sendTopicRequest(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String code = suburb.split("'")[3];
+                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?code="+code+"&minute="+minute);
+                    JSONObject topic_result = getHttpConnection(topicURL);
+                    Log.d(TAG, "run: "+topic_result.toString());
+                    if(!topic_result.isNull(code)){
+                        JSONArray topTopics = (JSONArray) topic_result.get(code);
+                        JSONArray topic = (JSONArray) topTopics.get(0);
+                        showTopicResponse((JSONArray)topic.get(1));
+                    }else{
+                        NoTopic();
+                    }
 //                    JSONArray topic = (JSONArray)topic_result.get("top_topics");
-//                    JSONArray topTopics = (JSONArray) topic.get(0);
-//                    showTopicResponse((JSONArray)topTopics.get(1));
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    Log.d(TAG, "run: "+e.getMessage());
-//                }
-//            }
-//        }).start();
-//    }
-//
-//
-//
-//    private JSONObject getHttpConnection(URL url){
-//        try {
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.connect();
-//            int responseCode = connection.getResponseCode();
-//            if(responseCode == HttpURLConnection.HTTP_OK  ){
-//                InputStream input = connection.getInputStream();
-//                JSONObject result =  getJsonObject(input);
-//                connection.disconnect();
-//                return result;
-//            }
-//            else{
-//                networkError();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//
-//    }
-//
-//
-//    private void networkError(){
-//        runOnUiThread((new Runnable() {
-//            @Override
-//            public void run() {
-//                Toast.makeText(result.this,"Network Error",Toast.LENGTH_SHORT);
-//            }
-//        }));
-//    }
-//
-//
-//
-//
-//    //Returns a json object from an input stream
-//    private JSONObject getJsonObject(InputStream input){
-//
-//        try {
-//            BufferedReader streamReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
-//            StringBuilder responseStrBuilder = new StringBuilder();
-//            String inputStr;
-//            while ((inputStr = streamReader.readLine()) != null)
-//                responseStrBuilder.append(inputStr);
-//
-//            JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
-//
-//            //returns the json object
-//            return jsonObject;
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        //if something went wrong, return null
-//        return null;
-//    }
-//
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "run: "+e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+
+
+    private JSONObject getHttpConnection(URL url){
+        try {
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if(responseCode == HttpURLConnection.HTTP_OK  ){
+                InputStream input = connection.getInputStream();
+                JSONObject result =  getJsonObject(input);
+                connection.disconnect();
+                return result;
+            }
+            else{
+                networkError();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+
+    private void networkError(){
+        runOnUiThread((new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(result.this,"Network Error",Toast.LENGTH_SHORT);
+            }
+        }));
+    }
+
+    private void NoTopic(){
+        runOnUiThread((new Runnable() {
+            @Override
+            public void run() {
+                topicText.setText("No data");
+            }
+        }));
+    }
+
+
+
+
+    //Returns a json object from an input stream
+    private JSONObject getJsonObject(InputStream input){
+
+        try {
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+            StringBuilder responseStrBuilder = new StringBuilder();
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null)
+                responseStrBuilder.append(inputStr);
+
+            JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+
+            //returns the json object
+            return jsonObject;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //if something went wrong, return null
+        return null;
+    }
+
 //    private void showResponse(final Double hisAverage) {
 //        runOnUiThread(new Runnable() {
 //            @Override
@@ -199,24 +216,24 @@ public class result extends AppCompatActivity {
 //            }
 //        });
 //    }
-//
-//    private void showTopicResponse(final JSONArray topic) {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    String topTopics = "";
-//                    for(int i =0; i<5& i<topic.length();i++){
-//                        topTopics = topTopics+topic.getString(i)+"\n";
-//                    }
-//                    topicText.setText(topTopics);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//    }
+
+    private void showTopicResponse(final JSONArray topic) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String topTopics = "";
+                    for(int i =0; i<5& i<topic.length();i++){
+                        topTopics = topTopics+topic.getString(i)+"\n";
+                    }
+                    topicText.setText(topTopics);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
 
     private void realtimeResult(final Double realAverage,final int[] count) {
