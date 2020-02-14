@@ -9,6 +9,7 @@ import logging
 import ujson
 import datetime
 import redis
+import threading
 
 logger = logging.getLogger('django')
 pool = redis.ConnectionPool(host=REDIS_DOMAIN, port=REDIS_PORT,
@@ -47,13 +48,15 @@ def realtime_router(request):
     r = redis.Redis(connection_pool=pool)
     redis_key = 'realtime' + str(minute)
     cache_result = r.get(redis_key)
+
     if cache_result is not None:
         logger.info("retrieve result from redis: %s", cache_result)
+        calc_thread = threading.Thread(target=realtime_zones,
+                                       kwargs={'request': request})
+        calc_thread.start()
         return HttpResponse(cache_result)
 
     calculated_result = realtime_zones(request)
-    r.set(redis_key, calculated_result.content)
-    r.expire(redis_key, minute * 10)
     return calculated_result
 
 
@@ -86,7 +89,10 @@ def realtime_zones(request):
     :param request:
     :return: json like: {"Melbourne":{"count":2,"sum":2.0,"avg":1.0}}
     """
+    r = redis.Redis(connection_pool=pool)
+
     minute = request.GET.get('minute', default=5)
+    redis_key = 'realtime' + str(minute)
 
     resp = dict()
     now = datetime.datetime.now()
@@ -137,6 +143,10 @@ def realtime_zones(request):
     resp['start_time'] = start_time
     resp['end_time'] = end_time
     resp_str = ujson.dumps(resp)
+    logger.info('saving redis row %s', resp_str)
+    r.set(redis_key, resp_str)
+    r.expire(redis_key, minute * 10)
+
     return HttpResponse(resp_str)
 
 
@@ -328,6 +338,9 @@ def top_topics_by_code(request):
 
 
 if __name__ == '__main__':
-    melb_json = ujson.load(
-        open(os.path.join(os.path.dirname(BASE_DIR), 'SA2boundary.json')))
-    # print(os.path.join(os.path.dirname(BASE_DIR),'SA2boundary.json'))
+    def test_thread():
+        time.sleep(1000)
+        return
+
+
+    print(333)
