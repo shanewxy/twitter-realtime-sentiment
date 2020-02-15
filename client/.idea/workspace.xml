@@ -13,7 +13,6 @@
     <list default="true" id="129b9910-de43-4b54-918f-530222958642" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,46 +41,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="423" column="39" lean-forward="true" selection-start-line="423" selection-start-column="39" selection-end-line="423" selection-end-column="39" />
-              <folding>
-                <element signature="e#14783#14784#0" expanded="true" />
-                <element signature="e#14811#14812#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="338">
+              <caret line="529" column="16" lean-forward="true" selection-start-line="529" selection-start-column="16" selection-end-line="529" selection-end-column="16" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="112" column="53" selection-start-line="112" selection-start-column="53" selection-end-line="112" selection-end-column="53" />
-              <folding>
-                <element signature="e#3644#4546#0" expanded="true" />
-                <element signature="e#4545#4546#0" expanded="true" />
-                <element signature="e#5357#5531#0" expanded="true" />
-                <element signature="e#5530#5531#0" expanded="true" />
-                <element signature="e#5593#5713#0" expanded="true" />
-                <element signature="e#5712#5713#0" expanded="true" />
-                <element signature="e#7152#7616#0" expanded="true" />
-                <element signature="e#7615#7616#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="874">
+              <caret line="107" column="36" selection-start-line="107" selection-start-column="36" selection-end-line="107" selection-end-column="36" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_result.xml">
-          <provider editor-type-id="android-designer2" />
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="2907">
               <caret line="153" column="43" selection-start-line="153" selection-start-column="43" selection-end-line="153" selection-end-column="43" />
             </state>
           </provider>
+          <provider editor-type-id="android-designer2" />
         </entry>
       </file>
     </leaf>
@@ -131,8 +116,8 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_search.xml" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_location.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java" />
       </list>
     </option>
   </component>
@@ -181,34 +166,14 @@
           <expand>
             <path>
               <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java (generated)" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-            </path>
-            <path>
-              <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-            <path>
-              <item name="Twitter sentiment" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -486,7 +451,14 @@
       <option name="project" value="LOCAL" />
       <updated>1581412344194</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="send request with SA2 code">
+      <created>1581579987899</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1581579987899</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TodoView">
@@ -511,7 +483,7 @@
       <window_info id="Resources Explorer" order="6" />
       <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Run" order="0" weight="0.3286119" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.49932975" visible="true" weight="0.33427763" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="1" sideWeight="0.49932975" visible="true" weight="0.33286119" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.3286119" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.22946176" />
       <window_info anchor="bottom" id="Terminal" order="4" weight="0.28045326" />
@@ -576,7 +548,8 @@
     <MESSAGE value="single line textview" />
     <MESSAGE value="add threads" />
     <MESSAGE value="send all requests in location file" />
-    <option name="LAST_COMMIT_MESSAGE" value="send all requests in location file" />
+    <MESSAGE value="send request with SA2 code" />
+    <option name="LAST_COMMIT_MESSAGE" value="send request with SA2 code" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -823,12 +796,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_search.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
       <provider editor-type-id="text-editor">
         <state relative-caret-position="684">
           <caret line="36" column="4" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="4" />
         </state>
       </provider>
+      <provider selected="true" editor-type-id="android-designer2" />
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/51a955e1cd7326b74b8fc424f5b42fa4/jetified-play-services-maps-16.1.0/jars/classes.jar!/com/google/android/gms/maps/internal/zzbe.class">
       <provider selected="true" editor-type-id="text-editor">
@@ -914,12 +887,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_location.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
       <provider editor-type-id="text-editor">
         <state relative-caret-position="215">
           <caret line="16" column="55" lean-forward="true" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
         </state>
       </provider>
+      <provider selected="true" editor-type-id="android-designer2" />
     </entry>
     <entry file="jar://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-29/android.jar!/java/net/URL.class">
       <provider selected="true" editor-type-id="text-editor">
@@ -936,38 +909,24 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_result.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2907">
           <caret line="153" column="43" selection-start-line="153" selection-start-column="43" selection-end-line="153" selection-end-column="43" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="423" column="39" lean-forward="true" selection-start-line="423" selection-start-column="39" selection-end-line="423" selection-end-column="39" />
-          <folding>
-            <element signature="e#14783#14784#0" expanded="true" />
-            <element signature="e#14811#14812#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/result.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="112" column="53" selection-start-line="112" selection-start-column="53" selection-end-line="112" selection-end-column="53" />
-          <folding>
-            <element signature="e#3644#4546#0" expanded="true" />
-            <element signature="e#4545#4546#0" expanded="true" />
-            <element signature="e#5357#5531#0" expanded="true" />
-            <element signature="e#5530#5531#0" expanded="true" />
-            <element signature="e#5593#5713#0" expanded="true" />
-            <element signature="e#5712#5713#0" expanded="true" />
-            <element signature="e#7152#7616#0" expanded="true" />
-            <element signature="e#7615#7616#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="874">
+          <caret line="107" column="36" selection-start-line="107" selection-start-column="36" selection-end-line="107" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/twittersentiment/location.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="529" column="16" lean-forward="true" selection-start-line="529" selection-start-column="16" selection-end-line="529" selection-end-column="16" />
         </state>
       </provider>
     </entry>

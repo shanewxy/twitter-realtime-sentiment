@@ -411,7 +411,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time);
+                    URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/cache?minute=" + time);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.connect();
@@ -526,7 +526,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                     style.setStrokeWidth(2);
                     style.setClickable(true);
                     if (!real_result.isNull(name)) {
-                        Log.d(TAG, "onClick: " + name);
+//                        Log.d(TAG, "onClick: " + name);
                         JSONObject realTime = (JSONObject) real_result.get(name);
                         float average = Float.parseFloat(realTime.getString("avg"));
                         int[] color = new int[]{251, 211, 211};
@@ -562,7 +562,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                             JSONObject realTime = (JSONObject) real_result.get(name);
                             intent.putExtra("average", Double.parseDouble(realTime.getString("avg")));
                             String pos = realTime.getString("positive");
-                            Log.d(TAG, "onFeatureClick: " + pos);
+//                            Log.d(TAG, "onFeatureClick: " + pos);
                             int[] count = new int[]{Integer.parseInt(realTime.getString("positive")),
                                     Integer.parseInt(realTime.getString("negative")),
                                     Integer.parseInt(realTime.getString("neutral"))};
