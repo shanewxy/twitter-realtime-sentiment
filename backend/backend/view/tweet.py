@@ -1,6 +1,6 @@
 from backend.database.couchdb_connector import *
 from backend.settings import *
-# from shapely import *
+from backend.config import *
 from django.views.decorators.http import require_http_methods
 from backend.topic_modeling.topic import *
 from django.views.decorators.csrf import csrf_exempt
@@ -8,8 +8,12 @@ from django.http import HttpResponse
 import logging
 import ujson
 import datetime
+import redis
+import threading
 
 logger = logging.getLogger('django')
+pool = redis.ConnectionPool(host=REDIS_DOMAIN, port=REDIS_PORT,
+                            decode_responses=True)
 
 
 @require_http_methods(['POST'])
@@ -26,7 +30,8 @@ def tweet_upload(request):
 
     tweet_json = ujson.loads(tweet)
     tweet_json['timestamp'] = datetime.datetime.timestamp(
-        datetime.datetime.strptime(tweet_json['created_at'], '%a %b %d %H:%M:%S %z %Y'))
+        datetime.datetime.strptime(tweet_json['created_at'],
+                                   '%a %b %d %H:%M:%S %z %Y'))
     print(tweet_json['timestamp'])
     tweet_json['sentiment'] = tweet_json['sentiment']
 
@@ -35,6 +40,24 @@ def tweet_upload(request):
         tweet_id, rev = tweet_db.save(tweet_json)
 
     return HttpResponse(ujson.dumps(tweet_json))
+
+
+@require_http_methods(['GET'])
+def realtime_router(request):
+    minute = request.GET.get('minute', default=5)
+    r = redis.Redis(connection_pool=pool)
+    redis_key = 'realtime' + str(minute)
+    cache_result = r.get(redis_key)
+
+    if cache_result is not None:
+        logger.info("retrieve result from redis: %s", cache_result)
+        calc_thread = threading.Thread(target=realtime_zones,
+                                       kwargs={'request': request})
+        calc_thread.start()
+        return HttpResponse(cache_result)
+
+    calculated_result = realtime_zones(request)
+    return calculated_result
 
 
 @require_http_methods(['GET'])
@@ -50,8 +73,9 @@ def historic_zones(request):
     resp = dict()
 
     for row in result:
-        resp[(row.key[0], row.key[1])] = {'avg': row.value.get('sum') / row.value.get('count'),
-                                          'count': row.value.get('count')}
+        resp[(row.key[0], row.key[1])] = {
+            'avg': row.value.get('sum') / row.value.get('count'),
+            'count': row.value.get('count')}
     logger.info("response: %s", resp)
 
     return HttpResponse(ujson.dumps(resp))
@@ -65,7 +89,11 @@ def realtime_zones(request):
     :param request:
     :return: json like: {"Melbourne":{"count":2,"sum":2.0,"avg":1.0}}
     """
+    r = redis.Redis(connection_pool=pool)
+
     minute = request.GET.get('minute', default=5)
+    redis_key = 'realtime' + str(minute)
+
     resp = dict()
     now = datetime.datetime.now()
     now_timestamp = datetime.datetime.timestamp(now)
@@ -73,7 +101,8 @@ def realtime_zones(request):
     start_time = now - datetime.timedelta(minutes=int(minute))
     start_timestamp = datetime.datetime.timestamp(start_time)
 
-    tweets = tweet_db.view("sentiment/realtime_zone", start_key=start_timestamp, end_key=now_timestamp)
+    tweets = tweet_db.view("sentiment/realtime_zone",
+                           start_key=start_timestamp, end_key=now_timestamp)
 
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
     end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
@@ -84,7 +113,8 @@ def realtime_zones(request):
         user = tweet.value[3]
         key = (name, code)
         if resp.get(key) is None:
-            resp[key] = {'count': 0, 'sum': 0.0, 'users': set(), 'positive': 0, 'negative': 0, 'neutral': 0}
+            resp[key] = {'count': 0, 'sum': 0.0, 'users': set(), 'positive': 0,
+                         'negative': 0, 'neutral': 0}
         resp[key]['count'] += 1
         resp[key]['sum'] += score
         resp[key]['users'].add(user)
@@ -100,17 +130,24 @@ def realtime_zones(request):
         resp[place]['avg'] = score['sum'] / score['count']
         resp[place]['users_count'] = len(resp[place]['users'])
         resp[place].pop('users')
-        stats = {'sa2_name': place[0], 'sa2_code': place[1], 'start_time': start_time, 'end_time': end_time,
+        stats = {'sa2_name': place[0], 'sa2_code': place[1],
+                 'start_time': start_time, 'end_time': end_time,
                  'avg': resp[place]['avg'],
-                 'count': score['count'], 'users_count': resp[place]['users_count'],
-                 'positive': resp[place]['positive'], 'negative': resp[place]['negative'],
+                 'count': score['count'],
+                 'users_count': resp[place]['users_count'],
+                 'positive': resp[place]['positive'],
+                 'negative': resp[place]['negative'],
                  'neutral': resp[place]['neutral']}
         statistics_db.save(stats)
 
     resp['start_time'] = start_time
     resp['end_time'] = end_time
+    resp_str = ujson.dumps(resp)
+    logger.info('saving redis row %s', resp_str)
+    r.set(redis_key, resp_str)
+    r.expire(redis_key, minute * 10)
 
-    return HttpResponse(ujson.dumps(resp))
+    return HttpResponse(resp_str)
 
 
 @require_http_methods(['GET'])
@@ -165,7 +202,8 @@ def top_words(request):
 
     start_time = now - datetime.timedelta(minutes=int(minute))
     start_timestamp = datetime.datetime.timestamp(start_time)
-    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+    tweets = tweet_db.view("sentiment/tweets_content",
+                           start_key=start_timestamp, end_key=now_timestamp)
 
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
     end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
@@ -198,7 +236,8 @@ def top_topics(request):
 
     start_time = now - datetime.timedelta(minutes=int(minute))
     start_timestamp = datetime.datetime.timestamp(start_time)
-    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+    tweets = tweet_db.view("sentiment/tweets_content",
+                           start_key=start_timestamp, end_key=now_timestamp)
 
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
     end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
@@ -232,7 +271,8 @@ def top_topics_with_location(request):
 
     start_time = now - datetime.timedelta(minutes=int(minute))
     start_timestamp = datetime.datetime.timestamp(start_time)
-    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+    tweets = tweet_db.view("sentiment/tweets_content",
+                           start_key=start_timestamp, end_key=now_timestamp)
 
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
     end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
@@ -276,7 +316,8 @@ def top_topics_by_code(request):
 
     start_time = now - datetime.timedelta(minutes=int(minute))
     start_timestamp = datetime.datetime.timestamp(start_time)
-    tweets = tweet_db.view("sentiment/tweets_content", start_key=start_timestamp, end_key=now_timestamp)
+    tweets = tweet_db.view("sentiment/tweets_content",
+                           start_key=start_timestamp, end_key=now_timestamp)
 
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S%z')
     end_time = now.strftime('%Y-%m-%d %H:%M:%S%z')
@@ -297,5 +338,9 @@ def top_topics_by_code(request):
 
 
 if __name__ == '__main__':
-    melb_json = ujson.load(open(os.path.join(os.path.dirname(BASE_DIR), 'SA2boundary.json')))
-    # print(os.path.join(os.path.dirname(BASE_DIR),'SA2boundary.json'))
+    def test_thread():
+        time.sleep(1000)
+        return
+
+
+    print(333)

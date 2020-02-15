@@ -26,5 +26,6 @@ urlpatterns = [
     # path('stats/realtime/topics/location/', top_topics_with_location),
     path('stats/realtime/topics/location', top_topics_by_code),
     path('stats/realtime', realtime_zones),
+    path('stats/realtime/cache', realtime_router),
     path('stats/historic/minmax', stats_min_max)
 ]
