@@ -68,8 +68,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
     private AutoCompleteTextView sa2Name;
     private int time;
     private AVLoadingIndicatorView loadingView;
-    private Boolean task1 = false, task2 = false;
-//    private Intent intent =new Intent();
+    private Boolean task1 = false;
     private JSONObject historyResult,TopicResult;
 
 
@@ -477,42 +476,42 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
 
     }).start();
 }
-    public void sendTopicRequest() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?minute=" + time);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.connect();
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode == HttpURLConnection.HTTP_OK) {
-                        InputStream input = connection.getInputStream();
-                        TopicResult = getJsonObject(input);
-                        task2 = true;
-                        Log.d(TAG, "run: get Topic result ");
-                        connection.disconnect();
-                    } else {
-                        networkError();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "run: " + e.getMessage());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "run: " + e.getMessage());
-                }
-            }
-
-        }).start();
-    }
+//    public void sendTopicRequest() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?minute=" + time);
+//                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                    connection.setRequestMethod("GET");
+//                    connection.connect();
+//                    int responseCode = connection.getResponseCode();
+//                    if (responseCode == HttpURLConnection.HTTP_OK) {
+//                        InputStream input = connection.getInputStream();
+//                        TopicResult = getJsonObject(input);
+//                        task2 = true;
+//                        Log.d(TAG, "run: get Topic result ");
+//                        connection.disconnect();
+//                    } else {
+//                        networkError();
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    Log.d(TAG, "run: " + e.getMessage());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.d(TAG, "run: " + e.getMessage());
+//                }
+//            }
+//
+//        }).start();
+//    }
 
     private void showMapResult(final JSONObject real_result) {
         runOnUiThread(new  Runnable(){
             public void run(){
         try {
-            GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.victoria, getApplicationContext());
+            GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.greatermelb, getApplicationContext());
             GeoJsonPolygonStyle polygonStyle = layer.getDefaultPolygonStyle();
             polygonStyle.setClickable(true);
             polygonStyle.setStrokeColor(Color.BLUE);
