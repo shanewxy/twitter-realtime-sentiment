@@ -419,14 +419,14 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                         InputStream input = connection.getInputStream();
                         JSONObject result =  getJsonObject(input);
                         Log.d(TAG, "run: got realtime data");
-                        while(true){
-                            if(task1) {
+//                        while(true){
+//                            if(task1) {
                                 showMapResult(result);
                                 enterResponse(result);
-                                break;
-                            }
-                            Thread.sleep(200);
-                        }
+//                                break;
+//                            }
+//                            Thread.sleep(200);
+//                        }
                         connection.disconnect();
                     }
                     else{
@@ -512,6 +512,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
             public void run(){
         try {
             GeoJsonLayer layer = new GeoJsonLayer(mMap, R.raw.greatermelb, getApplicationContext());
+            layer.addLayerToMap();
             GeoJsonPolygonStyle polygonStyle = layer.getDefaultPolygonStyle();
             polygonStyle.setClickable(true);
             polygonStyle.setStrokeColor(Color.BLUE);
@@ -548,7 +549,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                     }
                 }
             }
-            layer.addLayerToMap();
             loadingView.hide();
             layer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
                 @Override

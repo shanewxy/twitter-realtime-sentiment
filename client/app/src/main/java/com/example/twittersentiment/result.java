@@ -111,7 +111,7 @@ public class result extends AppCompatActivity {
             public void run() {
                 try {
                     String code = suburb.split("'")[3];
-                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?code="+code+"&minute="+minute);
+                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location/cache?code="+code+"&minute="+minute);
                     JSONObject topic_result = getHttpConnection(topicURL);
                     Log.d(TAG, "run: "+topic_result.toString());
                     if(!topic_result.isNull(code)){
