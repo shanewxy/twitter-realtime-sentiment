@@ -17,6 +17,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,14 +36,12 @@ public class result extends AppCompatActivity {
 
 
     private String TAG = "result";
-    private  Integer minute;
+    private Integer minute;
     private String suburb;
     private Double hisAverage;
-    private TextView hisText,realText,topicText;
+    private TextView hisText, realText, topicText;
     private ProgressBar hisBar, realBar;
     private PieChart piechart;
-
-
 
 
     @Override
@@ -50,11 +49,11 @@ public class result extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         Intent getIntent = getIntent();
-        minute = getIntent.getIntExtra("minute",600);
+        minute = getIntent.getIntExtra("minute", 600);
         suburb = getIntent.getStringExtra("suburb");
         String topic = getIntent.getStringExtra("topic");
-        hisAverage = getIntent.getDoubleExtra("history",0);
-        Double realAverage = getIntent.getDoubleExtra("average",0.0);
+        hisAverage = getIntent.getDoubleExtra("history", 0);
+        Double realAverage = getIntent.getDoubleExtra("average", 0.0);
         int[] count = getIntent.getIntArrayExtra("count");
         hisText = findViewById(R.id.hisAverge);
         hisBar = findViewById(R.id.hisBar);
@@ -65,22 +64,20 @@ public class result extends AppCompatActivity {
         piechart.setNoDataText("");
 //        topicText.setText(topic);
         hisText.setText(String.format("%.4f", hisAverage));
-        hisBar.setProgress((int)((hisAverage+1.0)*50));
+        hisBar.setProgress((int) ((hisAverage + 1.0) * 50));
 //        String history = getIntent.getStringExtra("history");
 //        Log.d(TAG, "onCreate: "+history);
         TextView suburbName = findViewById(R.id.subName);
         suburbName.setText(suburb.split("'")[1]);
-        realtimeResult(realAverage,count);
+        realtimeResult(realAverage, count);
 
 //        sendHisRequest();
         sendTopicRequest();
 
 
-
-
     }
 
-//    public  void sendHisRequest(){
+    //    public  void sendHisRequest(){
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -105,20 +102,20 @@ public class result extends AppCompatActivity {
 //    }
 //
 //
-    public  void sendTopicRequest(){
+    public void sendTopicRequest() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     String code = suburb.split("'")[3];
-                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location/cache?code="+code+"&minute="+minute);
+                    URL topicURL = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location/cache?code=" + code + "&minute=" + minute);
                     JSONObject topic_result = getHttpConnection(topicURL);
-                    Log.d(TAG, "run: "+topic_result.toString());
-                    if(!topic_result.isNull(code)){
+                    Log.d(TAG, "run: " + topic_result.toString());
+                    if (!topic_result.isNull(code)) {
                         JSONArray topTopics = (JSONArray) topic_result.get(code);
                         JSONArray topic = (JSONArray) topTopics.get(0);
-                        showTopicResponse((JSONArray)topic.get(1));
-                    }else{
+                        showTopicResponse((JSONArray) topic.get(1));
+                    } else {
                         NoTopic();
                     }
 //                    JSONArray topic = (JSONArray)topic_result.get("top_topics");
@@ -126,27 +123,25 @@ public class result extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d(TAG, "run: "+e.getMessage());
+                    Log.d(TAG, "run: " + e.getMessage());
                 }
             }
         }).start();
     }
 
 
-
-    private JSONObject getHttpConnection(URL url){
+    private JSONObject getHttpConnection(URL url) {
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
             int responseCode = connection.getResponseCode();
-            if(responseCode == HttpURLConnection.HTTP_OK  ){
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream input = connection.getInputStream();
-                JSONObject result =  getJsonObject(input);
+                JSONObject result = getJsonObject(input);
                 connection.disconnect();
                 return result;
-            }
-            else{
+            } else {
                 networkError();
             }
         } catch (IOException e) {
@@ -157,16 +152,16 @@ public class result extends AppCompatActivity {
     }
 
 
-    private void networkError(){
+    private void networkError() {
         runOnUiThread((new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(result.this,"Network Error",Toast.LENGTH_SHORT);
+                Toast.makeText(result.this, "Network Error", Toast.LENGTH_SHORT);
             }
         }));
     }
 
-    private void NoTopic(){
+    private void NoTopic() {
         runOnUiThread((new Runnable() {
             @Override
             public void run() {
@@ -176,10 +171,8 @@ public class result extends AppCompatActivity {
     }
 
 
-
-
     //Returns a json object from an input stream
-    private JSONObject getJsonObject(InputStream input){
+    private JSONObject getJsonObject(InputStream input) {
 
         try {
             BufferedReader streamReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
@@ -223,8 +216,8 @@ public class result extends AppCompatActivity {
             public void run() {
                 try {
                     String topTopics = "";
-                    for(int i =0; i<5& i<topic.length();i++){
-                        topTopics = topTopics+topic.getString(i)+"\n";
+                    for (int i = 0; i < 5 & i < topic.length(); i++) {
+                        topTopics = topTopics + topic.getString(i) + "\n";
                     }
                     topicText.setText(topTopics);
 
@@ -236,14 +229,13 @@ public class result extends AppCompatActivity {
     }
 
 
-    private void realtimeResult(final Double realAverage,final int[] count) {
+    private void realtimeResult(final Double realAverage, final int[] count) {
         try {
-            realText.setText(String.format("%.4f",realAverage));
-            realBar.setProgress((int)((realAverage+1.0)*50));
-            if(count[0]+count[1]+count[2]==0){
+            realText.setText(String.format("%.4f", realAverage));
+            realBar.setProgress((int) ((realAverage + 1.0) * 50));
+            if (count[0] + count[1] + count[2] == 0) {
                 piechart.setNoDataText("No Tweets");
-            }
-            else {
+            } else {
                 piechart.setHoleRadius(50f);
                 piechart.setTransparentCircleRadius(30f);
                 piechart.setHoleColor(Color.TRANSPARENT);
@@ -251,6 +243,7 @@ public class result extends AppCompatActivity {
                 Description label = new Description();
                 label.setText("Number of Tweets");
                 label.setTextSize(15);
+
                 piechart.setDescription(label);
                 piechart.setExtraOffsets(5, 5, 5, 5);
                 ArrayList<PieEntry> yValues = new ArrayList<>();
@@ -258,6 +251,12 @@ public class result extends AppCompatActivity {
                 yValues.add(new PieEntry(count[1], "Negative Tweets"));
                 yValues.add(new PieEntry(count[2], "Neutral Tweets"));
                 PieDataSet pieDataSet = new PieDataSet(yValues, "");
+                pieDataSet.setValueFormatter(new ValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return (int) value + "";
+                    }
+                });
                 ArrayList<Integer> colors = new ArrayList<Integer>();
                 colors.add(Color.parseColor("#80FF5722"));
                 colors.add(Color.parseColor("#8003A9F4"));
@@ -284,7 +283,6 @@ public class result extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 
 
 }
