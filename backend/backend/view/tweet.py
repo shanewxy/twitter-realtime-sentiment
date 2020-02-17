@@ -113,7 +113,7 @@ def realtime_zones(request):
     :param request:
     :return: json like: {"Melbourne":{"count":2,"sum":2.0,"avg":1.0}}
     """
-    r = redis.Redis(connection_pool=pool)
+    r = redis.StrictRedis(connection_pool=pool)
 
     minute = request.GET.get('minute', default=5)
     redis_key = 'realtime' + str(minute)
@@ -169,7 +169,7 @@ def realtime_zones(request):
     resp_str = ujson.dumps(resp)
     logger.info('saving redis row %s', resp_str)
     r.set(redis_key, resp_str)
-    r.expire(redis_key, minute * 10)
+    r.expire(redis_key, int(minute) * 10)
 
     return HttpResponse(resp_str)
 
@@ -359,10 +359,10 @@ def top_topics_by_code(request):
     resp[code] = words
     resp_str = ujson.dumps(resp)
 
-    r = redis.Redis(connection_pool=pool)
+    r = redis.StrictRedis(connection_pool=pool)
     redis_key = str(code) + 'topic' + str(minute) + 'limit' + str(limit)
     r.set(redis_key, resp_str)
-    r.expire(redis_key, minute * 10)
+    r.expire(redis_key, int(minute) * 10)
 
     return HttpResponse(resp_str)
 
