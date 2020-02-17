@@ -61,6 +61,30 @@ def realtime_router(request):
 
 
 @require_http_methods(['GET'])
+def top_topics_router(request):
+    minute = request.GET.get('minute', default=5)
+    limit = request.GET.get('limit', default=10)
+    code = request.GET.get('code')
+
+    if code is None:
+        return top_topics_with_location(request)
+
+    r = redis.Redis(connection_pool=pool)
+    redis_key = str(code) + 'topic' + str(minute) + 'limit' + str(limit)
+    cache_result = r.get(redis_key)
+
+    if cache_result is not None:
+        logger.info("retrieve result from redis: %s", cache_result)
+        calc_thread = threading.Thread(target=top_topics_by_code,
+                                       kwargs={'request': request})
+        calc_thread.start()
+        return HttpResponse(cache_result)
+
+    calculated_result = top_topics_by_code(request)
+    return calculated_result
+
+
+@require_http_methods(['GET'])
 def historic_zones(request):
     """
     An api returning the statistics of all of the tweets in the database historically,
@@ -333,8 +357,14 @@ def top_topics_by_code(request):
 
     words = common_topics(texts, limit)
     resp[code] = words
+    resp_str = ujson.dumps(resp)
 
-    return HttpResponse(ujson.dumps(resp))
+    r = redis.Redis(connection_pool=pool)
+    redis_key = str(code) + 'topic' + str(minute) + 'limit' + str(limit)
+    r.set(redis_key, resp_str)
+    r.expire(redis_key, minute * 10)
+
+    return HttpResponse(resp_str)
 
 
 if __name__ == '__main__':
