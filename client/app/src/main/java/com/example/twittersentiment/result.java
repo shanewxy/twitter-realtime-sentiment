@@ -77,31 +77,7 @@ public class result extends AppCompatActivity {
 
     }
 
-    //    public  void sendHisRequest(){
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    URL historyURL = new URL("http://1926b0aa.jp.ngrok.io/stats/historic");
-//                    JSONObject his_result =  getHttpConnection(historyURL);
-//                    if(!his_result.isNull(suburb)) {
-//                        JSONObject history = (JSONObject) his_result.get(suburb);
-//                        hisAverage = Double.parseDouble(history.getString("avg"));
-//                    }
-//                    else{
-//                        hisAverage = 0.0;
-//                    }
-//                    showResponse(hisAverage);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    Log.d(TAG, "run: "+e.getMessage());
-//                }
-//            }
-//        }).start();
-//    }
-//
-//
+
     public void sendTopicRequest() {
         new Thread(new Runnable() {
             @Override
@@ -196,19 +172,7 @@ public class result extends AppCompatActivity {
         return null;
     }
 
-//    private void showResponse(final Double hisAverage) {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    hisText.setText(String.format("%.4f", hisAverage));
-//                    hisBar.setProgress((int)((hisAverage+1.0)*50));
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//    }
+
 
     private void showTopicResponse(final JSONArray topic) {
         runOnUiThread(new Runnable() {

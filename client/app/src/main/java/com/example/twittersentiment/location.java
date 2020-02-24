@@ -88,9 +88,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         sendRealTimeRequest();
 //        sendTopicRequest();
         sendHistoryRequest();
-//        sendRequest("http://1926b0aa.jp.ngrok.io/stats/historic",1);
-//        sendRequest("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?minute=" + time,2);
-//        intent =new Intent(location.this, result.class);
+
 
         // the autoCompeleteTextView
         Resources resources = getResources();
@@ -162,9 +160,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                 locationManager.requestLocationUpdates(locationProvider, 3000, 1, locationListener);
                 mapFragment.getMapAsync(this);
 
-//                sendRequest("http://1926b0aa.jp.ngrok.io/stats/realtime?minute=" + time, 1,handler);
-//                sendRequest("http://1926b0aa.jp.ngrok.io/stats/historic", 2,handler);
-//                sendRequest("http://1926b0aa.jp.ngrok.io/stats/realtime/topics?minute=" + time, 3,handler);
 
             }
         } catch (Exception e) {
@@ -215,18 +210,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                                     hisAverage = 0.0;
                                 }
                                 intent.putExtra("history", hisAverage);
-//                                if(!TopicResult.isNull(enteredSuburbName)){
-//                                    JSONArray topic = (JSONArray) TopicResult.get(enteredSuburbName);
-//                                    JSONArray topTopics = (JSONArray) topic.get(0);
-//                                    JSONArray finalTopic = (JSONArray) topTopics.get(1);
-//                                    String topTopic = "";
-//                                    for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
-//                                        topTopic = topTopic + finalTopic.getString(i) + "\n";
-//                                    }
-//                                    intent.putExtra("topic", topTopic);
-//                                }else{
-//                                    intent.putExtra("topic","No data");
-//                                }
                                 startActivity(intent);
                             } catch (Exception e) {
                                 Log.d(TAG, "onClick: " + e.getMessage());
@@ -357,52 +340,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         return false;
     }
 
-//    public void sendRequest(final String urlString, final int task, final Handler handler) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    URL url = new URL(urlString);
-//                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                    connection.setRequestMethod("GET");
-//                    connection.connect();
-//                    int responseCode = connection.getResponseCode();
-//                    if (responseCode == HttpURLConnection.HTTP_OK) {
-//                        InputStream input = connection.getInputStream();
-//                        String result;
-//                        if (task == 1) {
-//                            result = getWebString(input);
-////                            realTimeResult = getJsonObject(input);
-//                            task1 = true;
-//                            Log.d(TAG, "run: task1");
-//                        } else if (task == 2) {
-//                            result = getWebString(input);
-////                            historyResult =getJsonObject(input);
-//                            task2 = true;
-//                            Log.d(TAG, "run: task2");
-//                        } else {
-//                            result = getWebString(input);
-////                            topicResult = getJsonObject(input);
-//                            task3 = true;
-//                            Log.d(TAG, "run: task3");
-//                        }
-//                        Log.d(TAG, "run: "+result);
-//                        Message msg = new Message();
-//                        msg.obj = result;
-//                        msg.what = task;
-//                        handler.sendMessage(msg);
-//                        connection.disconnect();
-//                    } else {
-//                        networkError();
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    Log.d(TAG, "getHttpConnection: " + e.getMessage());
-//                }
-//
-//            }
-//        });
-//    }
 
 
     public void sendRealTimeRequest() {
@@ -476,36 +413,7 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
 
     }).start();
 }
-//    public void sendTopicRequest() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    URL url = new URL("http://1926b0aa.jp.ngrok.io/stats/realtime/topics/location?minute=" + time);
-//                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                    connection.setRequestMethod("GET");
-//                    connection.connect();
-//                    int responseCode = connection.getResponseCode();
-//                    if (responseCode == HttpURLConnection.HTTP_OK) {
-//                        InputStream input = connection.getInputStream();
-//                        TopicResult = getJsonObject(input);
-//                        task2 = true;
-//                        Log.d(TAG, "run: get Topic result ");
-//                        connection.disconnect();
-//                    } else {
-//                        networkError();
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    Log.d(TAG, "run: " + e.getMessage());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    Log.d(TAG, "run: " + e.getMessage());
-//                }
-//            }
-//
-//        }).start();
-//    }
+
 
     private void showMapResult(final JSONObject real_result) {
         runOnUiThread(new  Runnable(){
@@ -580,19 +488,6 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
                             hisAverage = 0.0;
                         }
                         intent.putExtra("history", hisAverage);
-
-//                        if(!TopicResult.isNull(name)){
-//                            JSONArray topic = (JSONArray) TopicResult.get(name);
-//                            JSONArray topTopics = (JSONArray) topic.get(0);
-//                            JSONArray finalTopic = (JSONArray) topTopics.get(1);
-//                            String topTopic = "";
-//                            for (int i = 0; i < 5 & i < finalTopic.length(); i++) {
-//                                topTopic = topTopic + finalTopic.getString(i) + "\n";
-//                            }
-//                            intent.putExtra("topic", topTopic);
-//                        }else{
-//                            intent.putExtra("topic","No data");
-//                        }
 
 
                         startActivity(intent);
@@ -669,26 +564,4 @@ public class location extends AppCompatActivity implements OnMapReadyCallback,
         return null;
     }
 
-//    private void getHttpConnection(URL url){
-//        try {
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.connect();
-//            int responseCode = connection.getResponseCode();
-//            if(responseCode == HttpURLConnection.HTTP_OK  ){
-//                InputStream input = connection.getInputStream();
-//                JSONObject result =  getJsonObject(input);
-//                showMapResult(result);
-//                enterResponse(result);
-//                connection.disconnect();
-//            }
-//            else{
-//                networkError();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Log.d(TAG, "getHttpConnection: "+e.getMessage());
-//        }
-//
-//    }
 }
