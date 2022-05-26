@@ -3,5 +3,5 @@ psycopg2>=2.7,<3.0
 CouchDB==1.2
 nltk
 pandas
-ujson==1.35
+ujson==5.2.0
 redis
